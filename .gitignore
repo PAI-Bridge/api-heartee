@@ -38,3 +38,6 @@ out/
 
 ### Spring Boot Configuration ###
 application-db.yml
+
+### DS_STORE ###
+.DS_Store
