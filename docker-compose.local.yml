@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  pg:
+    image: postgres:bullseye
+    container_name: heartee-local-db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=localpass
+      - POSTGRES_DB=api-heartee
+    ports:
+      - "5432:5432"
