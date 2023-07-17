@@ -1,50 +1,55 @@
-package paibridge.apiheartee.member.entity;
+package paibridge.apiheartee.partner.entity;
+
+import static javax.persistence.InheritanceType.JOINED;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import paibridge.apiheartee.common.entity.BaseEntity;
+import paibridge.apiheartee.member.entity.Member;
 
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity {
+@Inheritance(strategy = JOINED)
+@DiscriminatorColumn(name = "dtype")
+public abstract class Partner extends BaseEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "member_id")
+    @Column(name = "partner_id")
     private Long id;
 
-    // OAuth2.0 인증 관련 필드
-    @Enumerated(EnumType.STRING)
-    private OauthType oauthType;
-    private String oauthId;
-    private String email;
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     private String nickname;
     private String gender;
     private Integer age;
 
-    @Builder
-    public Member(OauthType oauthType, String oauthId, String email, String name, String nickname,
-        String gender, Integer age) {
-        this.oauthType = oauthType;
-        this.oauthId = oauthId;
-        this.email = email;
-        this.name = name;
+    @Enumerated(EnumType.STRING)
+    private Mbti mbti;
+
+    public Partner(Member member, String nickname, String gender, Integer age, Mbti mbti) {
+        this.member = member;
         this.nickname = nickname;
         this.gender = gender;
         this.age = age;
+        this.mbti = mbti;
     }
 }

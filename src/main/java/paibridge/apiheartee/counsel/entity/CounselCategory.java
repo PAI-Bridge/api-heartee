@@ -1,4 +1,4 @@
-package paibridge.apiheartee.member.entity;
+package paibridge.apiheartee.counsel.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,33 +18,23 @@ import paibridge.apiheartee.common.entity.BaseEntity;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity {
+public class CounselCategory extends BaseEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "member_id")
+    @Column(name = "counsel_category_id")
     private Long id;
 
-    // OAuth2.0 인증 관련 필드
     @Enumerated(EnumType.STRING)
-    private OauthType oauthType;
-    private String oauthId;
-    private String email;
-    private String name;
+    private CategoryType code;
 
-    private String nickname;
-    private String gender;
-    private Integer age;
+    private String title;
+    private String subtitle;
 
     @Builder
-    public Member(OauthType oauthType, String oauthId, String email, String name, String nickname,
-        String gender, Integer age) {
-        this.oauthType = oauthType;
-        this.oauthId = oauthId;
-        this.email = email;
-        this.name = name;
-        this.nickname = nickname;
-        this.gender = gender;
-        this.age = age;
+    public CounselCategory(CategoryType code, String title, String subtitle) {
+        this.code = code;
+        this.title = title;
+        this.subtitle = subtitle;
     }
 }
