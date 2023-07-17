@@ -7,6 +7,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
@@ -31,4 +32,10 @@ public class TempConversation extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private Object data;
+
+    @Builder
+    public TempConversation(Integer price, Object data) {
+        this.price = price;
+        this.data = data;
+    }
 }

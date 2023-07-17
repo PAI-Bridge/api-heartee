@@ -5,8 +5,10 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import paibridge.apiheartee.conversation.entity.TempConversation;
 import paibridge.apiheartee.counsel.entity.CategoryType;
 import paibridge.apiheartee.counsel.entity.CounselCategory;
 import paibridge.apiheartee.member.entity.Member;
@@ -29,6 +31,7 @@ public class InitDb {
         initService.categoryInit();
         initService.memberInit();
         initService.partnerInit();
+        initService.tempConversationInit();
     }
 
     @Component
@@ -121,6 +124,20 @@ public class InitDb {
             em.persist(partner1);
             em.persist(partner2);
             em.persist(partner3);
+        }
+
+        public void tempConversationInit() {
+            JSONObject obj = new JSONObject();
+            obj.put("a", "asdf");
+            obj.put("b", 123);
+            obj.put("3", new JSONObject());
+
+            TempConversation tempConversation = TempConversation.builder()
+                .price(1000)
+                .data(obj)
+                .build();
+
+            em.persist(tempConversation);
         }
     }
 }
