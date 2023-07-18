@@ -8,20 +8,22 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import paibridge.apiheartee.counsel.entity.CategoryType.Values;
 import paibridge.apiheartee.member.entity.Member;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorValue("DT") //DT (Dating)
+@DiscriminatorValue(Values.DT) //DT (Dating)
 @Table(name = "partner_dt")
-public class PartnerDT extends Partner{
+public class PartnerDT extends Partner {
 
     @Column(name = "info_dt")
     private String infoDT;
 
     @Builder
-    public PartnerDT(Member member, String nickname, String gender, Integer age, Mbti mbti, String info) {
+    public PartnerDT(Member member, String nickname, String gender, Integer age, Mbti mbti,
+        String info) {
         super(member, nickname, gender, age, mbti);
         this.infoDT = info;
     }
