@@ -41,3 +41,5 @@ application-db.yml
 
 ### DS_STORE ###
 .DS_Store
+
+logs/
