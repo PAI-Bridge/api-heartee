@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import paibridge.apiheartee.common.dto.DataArrayResponse;
 import paibridge.apiheartee.common.dto.DataResponse;
-import paibridge.apiheartee.counsel.service.CounselCategoryService;
 import paibridge.apiheartee.partner.dto.PartnerDto;
 import paibridge.apiheartee.partner.service.PartnerService;
 
@@ -23,13 +22,12 @@ import paibridge.apiheartee.partner.service.PartnerService;
 public class PartnerController {
 
     private final PartnerService partnerService;
-    private final CounselCategoryService counselCategoryService;
 
     @GetMapping
-    public DataArrayResponse<PartnerDto> findPartners(@RequestParam String dtype) {
+    public DataArrayResponse<PartnerDto> findPartners(
+        @RequestParam(required = false) String dtype) {
 
-        Long memberId = 1L; //인증 개발 이후 JWT 추출 값으로 대체
-        log.info("dtype = {}", dtype);
+        Long memberId = 4L; //인증 개발 이후 JWT 추출 값으로 대체
 
         List<PartnerDto> partners = partnerService.findPartners(memberId, dtype);
 
