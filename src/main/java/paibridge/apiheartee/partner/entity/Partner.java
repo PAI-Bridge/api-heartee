@@ -45,6 +45,9 @@ public abstract class Partner extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
+    @Column(insertable = false, updatable = false) //자동 생성 컬럼인 dtype의 충돌 방지 + Getter 사용
+    private String dtype;
+
     public Partner(Member member, String nickname, String gender, Integer age, Mbti mbti) {
         this.member = member;
         this.nickname = nickname;
