@@ -30,11 +30,13 @@ public class CounselCategory extends BaseEntity {
 
     private String title;
     private String subtitle;
+    private String imageUrl;
 
     @Builder
-    public CounselCategory(CategoryType code, String title, String subtitle) {
+    public CounselCategory(CategoryType code, String title, String subtitle, String imageUrl) {
         this.code = code;
         this.title = title;
         this.subtitle = subtitle;
+        this.imageUrl = imageUrl;
     }
 }
