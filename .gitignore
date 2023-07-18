@@ -41,3 +41,9 @@ application-db.yml
 
 ### DS_STORE ###
 .DS_Store
+
+### Log ###
+logs/
+
+### QueryDsl QCode Directory ###
+generated/
