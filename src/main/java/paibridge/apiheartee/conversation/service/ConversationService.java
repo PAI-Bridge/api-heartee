@@ -38,6 +38,7 @@ public class ConversationService {
         }
 
         private Integer guessPrice(String extractedStr) {
+            return extractedStr.length();
             // TODO : 추출된 텍스트를 가지고 가격을 추측
             // FIXME : 한국어인데.... 가격은 그냥 length 기준으로 잡으면 되나
         }

@@ -6,7 +6,7 @@ cloud:
       access-key: <저장해놓은 액세스 키>
       secret-key: <저장해놓은 비밀 액세스 키>
     region:
-      static: ap-northeast-2
+      static: ap-northeast-2 # region 고정
       auto: false
     stack:
-      auto: false
+      auto: false  #기본 생성하는 CloudFormation을 설정하지 않는다.

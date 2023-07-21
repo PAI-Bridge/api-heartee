@@ -14,7 +14,9 @@ public class ImageService {
     private final ImageTextExtractor imageTextExtractor;
 
     public String uploadImage(MultipartFile image) throws IOException {
-        return this.imageUploader.uploadImage(image);
+        String uploadedUrl = this.imageUploader.uploadImage(image);
+
+        return uploadedUrl;
     }
 
     public String extractTextFromImage(MultipartFile image) throws IOException{
