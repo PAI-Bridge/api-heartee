@@ -1,9 +1,11 @@
-package paibridge.apiheartee.conversation.service;
+package paibridge.apiheartee.conversation.service.image;
 
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,7 +14,8 @@ import java.util.List;
 @Service
 public class ImageTextExtractor {
 
-    public String extractTextFromImage(InputStream inputStream) throws IOException {
+    public String extractTextFromImage(MultipartFile image) throws IOException {
+        InputStream inputStream = image.getInputStream();
 
         ArrayList<AnnotateImageRequest> requests = new ArrayList<>();
 

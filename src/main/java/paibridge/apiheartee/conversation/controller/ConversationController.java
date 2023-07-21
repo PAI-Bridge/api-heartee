@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import paibridge.apiheartee.common.dto.DataResponse;
+import paibridge.apiheartee.conversation.dto.TempConversationDto;
 import paibridge.apiheartee.conversation.service.ConversationService;
-import paibridge.apiheartee.conversation.service.ImageService;
 
 import java.io.IOException;
 
@@ -23,8 +24,10 @@ public class ConversationController {
     }
 
     @PostMapping(value="/text", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String extractTextAndGuessPrice(@RequestParam(value="image") MultipartFile image) throws IOException {
-        return this.conversationService.extractTextAndGuessPrice(image);
+    public DataResponse extractTextAndGuessPrice(@RequestParam(value="image") MultipartFile image) throws IOException {
+        TempConversationDto tempDto = this.conversationService.extractTextAndGuessPrice(image);
+
+        return new DataResponse<>(tempDto);
     }
 
 }
