@@ -42,5 +42,13 @@ application-db.yml
 ### DS_STORE ###
 .DS_Store
 
+<<<<<<< HEAD
 ### GOOGLE VISION API ###
 heartee-test-9e2e9efc4a79.json
+=======
+### Log ###
+logs/
+
+### QueryDsl QCode Directory ###
+generated/
+>>>>>>> origin/dev
