@@ -1,0 +1,12 @@
+cloud:
+  aws:
+    s3:
+      bucket: <버킷 이름>
+    credentials:
+      access-key: <저장해놓은 액세스 키>
+      secret-key: <저장해놓은 비밀 액세스 키>
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
