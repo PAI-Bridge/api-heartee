@@ -1,18 +1,14 @@
 package paibridge.apiheartee.conversation.service;
 
-import com.google.api.gax.core.GoogleCredentialsProvider;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
-import net.sourceforge.tess4j.TesseractException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImagingOpException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
 public class ImageTextExtractor {
 
@@ -48,12 +44,8 @@ public class ImageTextExtractor {
 
                 }
                 client.close();
-
             }
-
-
         }
-
         return "";
 
     }

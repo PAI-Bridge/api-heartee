@@ -1,6 +1,5 @@
 package paibridge.apiheartee.conversation.service;
 
-import net.sourceforge.tess4j.TesseractException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +17,7 @@ public class ImageService {
         this.imageTextExtractor = imageTextExtractor;
     }
 
-    public String processImage(MultipartFile image) throws IOException, TesseractException {
+    public String processImage(MultipartFile image) throws IOException{
         String extractedStr = this.imageTextExtractor.extractTextFromImage(image.getInputStream());
         System.out.println("extractedStr = " + extractedStr);
         return extractedStr;
