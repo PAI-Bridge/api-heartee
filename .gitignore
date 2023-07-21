@@ -39,6 +39,9 @@ out/
 ### Spring Boot Configuration ###
 application-db.yml
 
+### AWS Configuration ###
+application-aws.yml
+
 ### DS_STORE ###
 .DS_Store
 
