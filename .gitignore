@@ -41,3 +41,6 @@ application-db.yml
 
 ### DS_STORE ###
 .DS_Store
+
+### GOOGLE VISION API ###
+heartee-test-9e2e9efc4a79.json
