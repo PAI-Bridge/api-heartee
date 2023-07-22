@@ -34,19 +34,32 @@ public class ImageTextExtractor {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
+
             for (AnnotateImageResponse res : responses) {
+                System.out.println("RESPONSE LIST START");
+
                 if (res.hasError()) {
                     System.out.println("Error: " + res.getError().getMessage());
                     return "Error: " + res.getError().getMessage();
                 }
 
-                for (EntityAnnotation annotation : res.getTextAnnotationsList()) {
-                    System.out.format("Text: %s\n", annotation.getDescription());
-                    System.out.format("Position : %s\n", annotation.getBoundingPoly());
-                    return annotation.getDescription();
+                System.out.println("FIRST ELEMENT DESCRIPTION");
+                String description = res.getTextAnnotationsList().get(0).getDescription(); // 첫 번째 description이 전체 텍스트를 하나의 string으로 묶은 값으로 보임
+                System.out.println("description = " + description);
+                System.out.println("FIRST ELEMENT END");
 
+                System.out.println("INNER LOOP START");
+
+                for (EntityAnnotation annotation : res.getTextAnnotationsList()) {
+                    System.out.println("Text Begin");
+                    System.out.format("Text: %s\n", annotation.getDescription());
+                    System.out.println("TEXT END");
                 }
+                System.out.println("INNER LOOP END");
+
                 client.close();
+                // 전체 텍스트 String을 반환
+                return res.getTextAnnotationsList().get(0).getDescription();
             }
         }
         return "";
