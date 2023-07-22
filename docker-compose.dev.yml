@@ -1,30 +1,54 @@
 version: "3"
 
 services:
-  pg_api:
+  api-heartee:
+    container_name: api-heartee
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      - pg_api_db
+    restart: always
+    networks:
+      - my-network
+
+  pg_api_db:
     image: postgres:bullseye
     container_name: heartee-api-db
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: devpass
-      POSTGRES_DB: api-heartee
     ports:
       - "5432:5432"
     volumes:
       - pg_data_api:/var/lib/postgresql/data
-
-  pg_prompts:
-    image: postgres:bullseye
-    container_name: heartee-prompts-db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: devpass
-      POSTGRES_DB: prompts-heartee
+      POSTGRES_DB: api-heartee
+    restart: always
+    networks:
+      - my-network
+
+  pg_prompts_db:
+    image: postgres:bullseye
+    container_name: heartee-prompts-db
     ports:
       - "5433:5432"
     volumes:
       - pg_data_prompts:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: prompts-heartee
+    restart: always
+    networks:
+      - my-network
 
 volumes:
   pg_data_prompts:
   pg_data_api:
+
+networks:
+  my-network:

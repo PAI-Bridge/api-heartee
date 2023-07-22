@@ -37,7 +37,9 @@ out/
 .vscode/
 
 ### Spring Boot Configuration ###
-application-db.yml
+application-*.yml
+!application-*.sample.yml
+
 
 ### DS_STORE ###
 .DS_Store
@@ -47,3 +49,6 @@ logs/
 
 ### QueryDsl QCode Directory ###
 generated/
+
+### Database ###
+ddl.sql

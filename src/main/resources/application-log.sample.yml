@@ -1,0 +1,11 @@
+spring:
+  logging:
+    file:
+      path: {path}
+      max-size: {size}
+      max-history: {history}
+    level:
+      root: info
+      paibridge.apiheartee: debug
+      org.hibernate.SQL: info
+      org.hibernate.type: info
