@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  pg_api:
+    image: postgres:bullseye
+    container_name: heartee-api-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: api-heartee
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data_api:/var/lib/postgresql/data
+
+  pg_prompts:
+    image: postgres:bullseye
+    container_name: heartee-prompts-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: prompts-heartee
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data_prompts:/var/lib/postgresql/data
+
+volumes:
+  pg_data_prompts:
+  pg_data_api:
