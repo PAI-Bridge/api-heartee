@@ -23,8 +23,8 @@ public class PartnerDT extends Partner {
 
     @Builder
     public PartnerDT(Member member, String nickname, String gender, Integer age, Mbti mbti,
-        String info) {
+        String infoDT) {
         super(member, nickname, gender, age, mbti);
-        this.infoDT = info;
+        this.infoDT = infoDT;
     }
 }
