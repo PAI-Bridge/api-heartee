@@ -19,7 +19,7 @@ public class CounselCategoryService {
     public List<CounselCategoryDto> findCounselCategories() {
         List<CounselCategory> categories = counselCategoryRepository.findAll();
         return categories.stream()
-            .map(CounselCategoryDto::toDto)
+            .map(CounselCategoryDto::create)
             .collect(Collectors.toList());
     }
 }

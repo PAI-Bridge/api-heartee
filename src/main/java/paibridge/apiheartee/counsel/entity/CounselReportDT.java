@@ -8,11 +8,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import paibridge.apiheartee.counsel.entity.CategoryType.Values;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorValue("DT") //DT (Dating)
+@DiscriminatorValue(Values.DT) //DT (Dating)
 @Table(name = "counsel_report_dt")
 public class CounselReportDT extends CounselReport {
 
@@ -20,7 +21,8 @@ public class CounselReportDT extends CounselReport {
     private Integer statDT;
 
     @Builder
-    public CounselReportDT(CounselRequest counselRequest, Integer temperature, String summary, String solution, Integer statA,
+    public CounselReportDT(CounselRequest counselRequest, Integer temperature, String summary,
+        String solution, Integer statA,
         Integer statB, Integer statDT) {
         super(counselRequest, temperature, summary, solution, statA, statB);
         this.statDT = statDT;

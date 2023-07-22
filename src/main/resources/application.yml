@@ -19,3 +19,6 @@ logging:
       max-file-size: 10MB
       max-request-size: 10MB
 
+value:
+  member-id:
+    temp: 4 # JWT 기능 개발 전 토큰의 memberId 값 특정을 위해 임시로 사용
