@@ -19,7 +19,7 @@ public class MemberService {
     public List<MemberDto> findMembers() {
         List<Member> members = memberRepository.findAll();
         return members.stream()
-            .map(MemberDto::toDto)
+            .map(MemberDto::create)
             .collect(Collectors.toList());
     }
 }
