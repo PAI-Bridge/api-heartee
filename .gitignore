@@ -37,7 +37,9 @@ out/
 .vscode/
 
 ### Spring Boot Configuration ###
-application-db.yml
+application-*.yml
+!application-*.sample.yml
+
 
 ### AWS Configuration ###
 application-aws.yml
@@ -45,13 +47,14 @@ application-aws.yml
 ### DS_STORE ###
 .DS_Store
 
-<<<<<<< HEAD
 ### GOOGLE VISION API ###
 heartee-test-9e2e9efc4a79.json
-=======
+
 ### Log ###
 logs/
 
 ### QueryDsl QCode Directory ###
 generated/
->>>>>>> origin/dev
+
+### Database ###
+ddl.sql

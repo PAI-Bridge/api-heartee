@@ -1,12 +1,38 @@
 version: "3"
 
 services:
-  pg:
+#  api-heartee:
+#    container_name: api-heartee
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: local
+#    depends_on:
+#      - pg_api_db
+#    restart: always
+#    networks:
+#      - my-network
+
+  pg_api_db:
     image: postgres:bullseye
-    container_name: heartee-local-db
+    container_name: heartee-api-db
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=localpass
-      - POSTGRES_DB=api-heartee
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: localpass
+      POSTGRES_DB: api-heartee
     ports:
       - "5432:5432"
+    volumes:
+      - pg_data_api:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - my-network
+
+volumes:
+  pg_data_api:
+
+networks:
+  my-network:
