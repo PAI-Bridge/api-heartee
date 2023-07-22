@@ -45,7 +45,11 @@ public abstract class CounselReport extends BaseEntity {
     @Column(name = "stat_b")
     private Integer statB; //   모든 유형 공통 수치, 컬럼명 미정
 
-    public CounselReport(CounselRequest counselRequest, Integer temperature, String summary, String solution, Integer statA,
+    @Column(insertable = false, updatable = false) //자동 생성 컬럼인 dtype의 충돌 방지 + Getter 사용
+    private String dtype;
+
+    public CounselReport(CounselRequest counselRequest, Integer temperature, String summary,
+        String solution, Integer statA,
         Integer statB) {
         this.counselRequest = counselRequest;
         this.temperature = temperature;
