@@ -2,6 +2,7 @@ package paibridge.apiheartee.partner.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +25,19 @@ public class PartnerService {
         List<CounselCategory> categories = counselCategoryRepository.findAll();
         List<Partner> partners = partnerRepository.findAll(memberId, dtype);
         return partners.stream()
-            .map(p -> PartnerDto.toDto(p, categories))
+            .map(p -> PartnerDto.create(p, categories))
             .collect(Collectors.toList());
     }
 
-    public PartnerDto findPartner(Long partnerId) {
+    public PartnerDto findPartner(Long partnerId) throws EntityNotFoundException {
 
         List<CounselCategory> categories = counselCategoryRepository.findAll();
         Partner partner = partnerRepository.findById(partnerId).orElse(null);
 
         if (partner == null) {
-            return null;
+            throw new EntityNotFoundException("Partner not found");
         }
 
-        return PartnerDto.toDto(partner, categories);
+        return PartnerDto.create(partner, categories);
     }
 }

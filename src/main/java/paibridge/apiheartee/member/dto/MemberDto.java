@@ -7,6 +7,7 @@ import paibridge.apiheartee.member.entity.Member;
 @Data
 @Builder
 public class MemberDto {
+
     private Long id;
     private String email;
     private String name;
@@ -14,7 +15,7 @@ public class MemberDto {
     private String gender;
     private Integer age;
 
-    public static MemberDto toDto(Member entity) {
+    public static MemberDto create(Member entity) {
         return MemberDto.builder()
             .id(entity.getId())
             .email(entity.getEmail())
