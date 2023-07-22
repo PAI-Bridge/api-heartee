@@ -20,5 +20,8 @@ RUN ./gradlew build
 # 빌드된 JAR 파일을 /app 디렉토리로 복사합니다.
 RUN mv build/libs/*-SNAPSHOT.jar /app/api-heartee.jar
 
+
+# COPY api-heartee.jar api-heartee.jar
+
 # Spring Boot 어플리케이션을 실행합니다.
 CMD ["java", "-jar", "api-heartee.jar"]
