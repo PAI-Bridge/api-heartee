@@ -53,3 +53,7 @@ generated/
 ### Database ###
 ddl.sql
 
+### Docker ###
+docker-compose.local.yml
+docker-compose.dev.yml
+
