@@ -31,23 +31,7 @@ services:
     networks:
       - my-network
 
-  pg_prompts_db:
-    image: postgres:bullseye
-    container_name: heartee-prompts-db
-    ports:
-      - "5433:5432"
-    volumes:
-      - pg_data_prompts:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: devpass
-      POSTGRES_DB: prompts-heartee
-    restart: always
-    networks:
-      - my-network
-
 volumes:
-  pg_data_prompts:
   pg_data_api:
 
 networks:
