@@ -14,13 +14,13 @@ public class ImageService {
     private final ImageTextExtractor imageTextExtractor;
 
     public String uploadImage(MultipartFile image) throws IOException {
-        String uploadedUrl = this.imageUploader.uploadImage(image);
+        String uploadedUrl = imageUploader.uploadImage(image);
 
         return uploadedUrl;
     }
 
     public String extractTextFromImage(MultipartFile image) throws IOException{
-        String extractedStr = this.imageTextExtractor.extractTextFromImage(image);
+        String extractedStr = imageTextExtractor.extractTextFromImage(image);
 
         System.out.println("extractedStr = " + extractedStr);
         return extractedStr;

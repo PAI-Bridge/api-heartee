@@ -1,5 +1,6 @@
 package paibridge.apiheartee.conversation.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,13 +16,9 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("conversations")
+@RequiredArgsConstructor
 public class ConversationController {
     private final ConversationService conversationService;
-
-    @Autowired
-    public ConversationController (ConversationService conversationService) {
-        this.conversationService = conversationService;
-    }
 
     @PostMapping(value="/text", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public DataResponse extractTextAndGuessPrice(@RequestParam(value="image") MultipartFile image) throws IOException {

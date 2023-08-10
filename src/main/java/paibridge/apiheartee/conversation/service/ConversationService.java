@@ -18,13 +18,13 @@ public class ConversationService {
     private final TempConversationRepository tempConversationRepository;
 
         public TempConversationDto extractTextAndGuessPrice(MultipartFile image) throws IOException {
-            String uploadedImageUrl = this.imageService.uploadImage(image);
+            String uploadedImageUrl = imageService.uploadImage(image);
 
-            String extractedStr = this.imageService.extractTextFromImage(image);
+            String extractedStr = imageService.extractTextFromImage(image);
 
-            Integer guessedPrice = this.guessPrice(extractedStr);
+            Integer guessedPrice = guessPrice(extractedStr);
 
-            TempConversation temp = this.tempConversationRepository.save(TempConversation.builder()
+            TempConversation temp = tempConversationRepository.save(TempConversation.builder()
                     .price(guessedPrice)
                     .data(extractedStr)
                     .build()
