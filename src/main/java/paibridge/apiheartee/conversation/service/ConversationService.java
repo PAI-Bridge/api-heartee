@@ -8,8 +8,11 @@ import paibridge.apiheartee.conversation.dto.TempConversationDto;
 import paibridge.apiheartee.conversation.entity.TempConversation;
 import paibridge.apiheartee.conversation.repository.TempConversationRepository;
 import paibridge.apiheartee.conversation.service.image.ImageService;
+import paibridge.apiheartee.conversation.service.image.dto.ChatDto;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +23,9 @@ public class ConversationService {
         public TempConversationDto extractTextAndGuessPrice(MultipartFile image) throws IOException {
             String uploadedImageUrl = imageService.uploadImage(image);
 
-            String extractedStr = imageService.extractTextFromImage(image);
+            ArrayList<ChatDto> chatDtos = imageService.extractChatsFromImage(image);
 
-            Integer guessedPrice = guessPrice(extractedStr);
+            Integer guessedPrice = guessPrice(chatDtos);
 
             TempConversation temp = tempConversationRepository.save(TempConversation.builder()
                     .price(guessedPrice)
@@ -37,9 +40,15 @@ public class ConversationService {
 
         }
 
-        private Integer guessPrice(String extractedStr) {
-            return extractedStr.length();
-            // TODO : 추출된 텍스트를 가지고 가격을 추측
-            // FIXME : 한국어인데.... 가격은 그냥 length 기준으로 잡으면 되나
+        private Integer guessPrice(ArrayList<ChatDto> chatDtos) {
+            // FIXME: 현재는 단순 길이로 가격 추정 중. 필요시 수정
+            Integer totalLength = chatDtos.stream()
+                    .map(chat -> chat.getChat().length())
+                    .reduce(0, (acc, cur) -> acc + cur);
+
+            return totalLength;
         }
+
+
+
 }
