@@ -27,9 +27,11 @@ public class ConversationService {
 
             Integer guessedPrice = guessPrice(chatDtos);
 
+            String allChatsToString = chatDtos.stream().map(chatDto -> chatDto.getChatter().toString() + chatDto.getChat() + "\n").reduce("", (total, chat) -> total + chat);
+
             TempConversation temp = tempConversationRepository.save(TempConversation.builder()
                     .price(guessedPrice)
-                    .data(extractedStr)
+                    .data(allChatsToString)
                     .build()
             );
 
