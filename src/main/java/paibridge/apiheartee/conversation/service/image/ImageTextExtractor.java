@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 @Service
 public class ImageTextExtractor {
 
-    public ArrayList<List<EntityAnnotation>> extractTextListFromImage(MultipartFile image) throws IOException {
+    public List<AnnotateImageResponse> extractTextListFromImage(MultipartFile image) throws IOException {
         InputStream inputStream = image.getInputStream();
 
         ArrayList<AnnotateImageRequest> requests = new ArrayList<>();
@@ -33,16 +33,12 @@ public class ImageTextExtractor {
         AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(img).build();
 
         requests.add(request);
-        System.out.println("request = " + request);
-        System.out.println("image = " + img);
 
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
-            ArrayList<List<EntityAnnotation>> responseList = responses.stream().map(res -> res.getTextAnnotationsList()).collect(Collectors.toCollection(ArrayList::new));
-
-            return responseList;
+            return responses;
         } catch (Exception e) {
             throw e;
         }
