@@ -1,5 +1,6 @@
 package paibridge.apiheartee.conversation.service.image;
 
+import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.EntityAnnotation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,9 @@ public class ImageService {
 
     public ArrayList<ChatDto> extractChatsFromImage(MultipartFile image) throws IOException{
         // 이미지가 여러 개 들어가는 경우를 고려하여 작성할 것
-        ArrayList<List<EntityAnnotation>> textList = imageTextExtractor.extractTextListFromImage(image);
+        List<AnnotateImageResponse> annotateImageResponses = imageTextExtractor.extractTextListFromImage(image);
 
-        ArrayList<ChatDto> chats = textFormatter.formatAnnotationsToChat(textList);
+        ArrayList<ChatDto> chats = textFormatter.formatAnnotationsToChats(annotateImageResponses);
 
         return chats;
     }
