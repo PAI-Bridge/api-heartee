@@ -26,9 +26,12 @@ public class TextFormatter {
         // 첫 chat은 이미지의 모든 텍스트를 포함하고 있음.
         RawChatWithVertexDto fullChatsString = rawChatsWithVertices.get(0);
 
+        System.out.println("fullChatsString = " + fullChatsString.getChat());
+
+        // FIXME : 단어들에 대해 loop를 돌면서 y좌표의 시작과 끝이 동일한 것들을 붙여나간다.
 
         String[] allChatsSepartedByLines = fullChatsString.getChat().split("\n");
-
+        System.out.println("allChatsSepartedByLines = " + allChatsSepartedByLines.length);
         Integer imageCenterXVertex = getCenterXVertexOfImage(fullChatsString);
 
         // 2. 중앙 X 좌표값으로 발화자를 분류
@@ -102,9 +105,11 @@ public class TextFormatter {
     private List<ChatDto> clarifyChattersByXVertex(String[] allChatsSeparatedByLines, List<RawChatWithVertexDto> rawChatsWithVertices, Integer centerXVertex)  {
         ArrayList<RawChatWithVertexDto> rawChatWithVertexDtos = removeFullChatStringFromChatsArr(rawChatsWithVertices);
 
-        Arrays.stream(allChatsSeparatedByLines).map((chat) -> {
-
-        });
+//        Arrays.stream(allChatsSeparatedByLines).map((chat) -> {
+//            // 문장별로 발화자를 분류
+//        });
+        // 이름 부분 삭제
+        // 전송 시각을 골라서
 
 //        for (String chat : allChatsSeparatedByLines) {
 //            RawChatWithVertexDto rawChatWithVertex = rawChatsWithVertices.stream().filter(rawChat -> rawChat.getChat().equals(chat)).findFirst().get();
@@ -130,8 +135,8 @@ public class TextFormatter {
 //                chatDtos.add(chatDto);
 //            }
 //        }
-
-        return chatDtos;
+        return new ArrayList<>();
+//        return chatDtos;
 
     }
 
