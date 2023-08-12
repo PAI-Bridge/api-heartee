@@ -7,6 +7,7 @@ import paibridge.apiheartee.common.dto.DataResponse;
 import paibridge.apiheartee.conversation.dto.TempConversationDto;
 import paibridge.apiheartee.conversation.entity.TempConversation;
 import paibridge.apiheartee.conversation.repository.TempConversationRepository;
+import paibridge.apiheartee.conversation.service.gpt.GPTService;
 import paibridge.apiheartee.conversation.service.image.ImageService;
 import paibridge.apiheartee.conversation.service.image.dto.ChatDto;
 
@@ -19,6 +20,7 @@ import java.util.Arrays;
 public class ConversationService {
     private final ImageService imageService;
     private final TempConversationRepository tempConversationRepository;
+    private final GPTService gptService;
 
         public TempConversationDto extractTextAndGuessPrice(MultipartFile image) throws IOException {
             String uploadedImageUrl = imageService.uploadImage(image);
@@ -27,11 +29,11 @@ public class ConversationService {
 
             Integer guessedPrice = guessPrice(chatDtos);
 
-            String allChatsToString = chatDtos.stream().map(chatDto -> chatDto.getChatter().toString() + chatDto.getChat() + "\n").reduce("", (total, chat) -> total + chat);
+            String chatsForGPTRequest = gptService.formatChatsToGPTRequest(chatDtos);
 
             TempConversation temp = tempConversationRepository.save(TempConversation.builder()
                     .price(guessedPrice)
-                    .data(allChatsToString)
+                    .data(chatsForGPTRequest)
                     .build()
             );
 
