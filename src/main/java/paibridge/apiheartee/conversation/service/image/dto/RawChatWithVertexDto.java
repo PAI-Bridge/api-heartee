@@ -19,6 +19,10 @@ public class RawChatWithVertexDto extends SquareChatAreaDto {
     public String getChat() {
         return chat;
     }
+
+    public void setChat(String chat) {
+        this.chat = chat;
+    }
 }
 
 
