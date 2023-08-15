@@ -29,11 +29,9 @@ public class ConversationService {
 
             Integer guessedPrice = guessPrice(chatDtos);
 
-            String chatsForGPTRequest = gptService.formatChatsToGPTRequest(chatDtos);
-
             TempConversation temp = tempConversationRepository.save(TempConversation.builder()
                     .price(guessedPrice)
-                    .data(chatsForGPTRequest)
+                    .data(chatDtos)
                     .build()
             );
 
