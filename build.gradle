@@ -53,6 +53,10 @@ dependencies {
 	// AWS 의존성
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	// Http 요청 의존성
+	implementation 'org.apache.httpcomponents:httpclient:4.5'
+	implementation 'com.google.code.gson:gson:2.8.5'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
