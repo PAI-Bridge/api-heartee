@@ -3,24 +3,20 @@ package paibridge.apiheartee.conversation.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import paibridge.apiheartee.common.dto.DataResponse;
 import paibridge.apiheartee.conversation.dto.TempConversationDto;
 import paibridge.apiheartee.conversation.entity.TempConversation;
 import paibridge.apiheartee.conversation.repository.TempConversationRepository;
-import paibridge.apiheartee.conversation.service.gpt.GPTService;
 import paibridge.apiheartee.conversation.service.image.ImageService;
 import paibridge.apiheartee.conversation.service.image.dto.ChatDto;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
 public class ConversationService {
     private final ImageService imageService;
     private final TempConversationRepository tempConversationRepository;
-    private final GPTService gptService;
 
         public TempConversationDto extractTextAndGuessPrice(MultipartFile image) throws IOException {
             String uploadedImageUrl = imageService.uploadImage(image);

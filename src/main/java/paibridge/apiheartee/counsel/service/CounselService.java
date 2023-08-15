@@ -16,6 +16,7 @@ import paibridge.apiheartee.counsel.entity.CounselReport;
 import paibridge.apiheartee.counsel.entity.CounselRequest;
 import paibridge.apiheartee.counsel.repository.CounselReportRepository;
 import paibridge.apiheartee.counsel.repository.CounselRequestRepository;
+import paibridge.apiheartee.counsel.service.gpt.GPTService;
 import paibridge.apiheartee.member.entity.Member;
 import paibridge.apiheartee.member.repository.MemberRepository;
 import paibridge.apiheartee.partner.dto.PartnerCreateDto;
@@ -35,6 +36,7 @@ public class CounselService {
     private final TempConversationRepository tempConversationRepository;
     private final CounselRequestRepository counselRequestRepository;
     private final CounselReportRepository counselReportRepository;
+    private final GPTService gptService;
 
     @Transactional
     public Long createCounselAndPartner(Long memberId, CounselPartnerCreateDto dto)
