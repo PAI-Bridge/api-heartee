@@ -31,6 +31,13 @@ public class ImageService {
 
         ArrayList<ChatDto> chats = textFormatter.formatAnnotationsToChats(annotateImageResponses);
 
+//        System.out.println("chats = " + chats);
+//
+//        chats.stream().map((chat) -> {
+//            System.out.println("chat = " + chat);
+//            return null;
+//        });
+
         return chats;
     }
 }

@@ -12,12 +12,8 @@ import paibridge.apiheartee.conversation.service.image.dto.SquareChatAreaDto;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class TextFormatter {
@@ -34,6 +30,7 @@ public class TextFormatter {
         Integer imageCenterXVertex = getCenterXVertexOfImage(fullChatsString);
 
         // 3. y좌표 순서대로 순서 정렬
+        Collections.sort(rawChatWithVertexDtos, new YVertexComperator());
 
         // 4. 중앙 X 좌표값으로 발화자를 분류
         List<ChatDto> chatDtos = clarifyChattersByXVertex(rawChatWithVertexDtos, imageCenterXVertex);
@@ -122,7 +119,6 @@ public class TextFormatter {
                     .chatter(Chatter.USER)
                     .build();
 
-            // 문장별로 발화자를 분류
         }).collect(Collectors.toList());
 
         return chatDtos;
@@ -142,7 +138,7 @@ public class TextFormatter {
                 RawChatWithVertexDto rawChatWithVertexDto = wordsInSameLineConcat.get(key);
                 String chatOfRawChatWithVertexDto = rawChatWithVertexDto.getChat();
 
-                String concatChat = chatOfRawChatWithVertexDto + " " + chat;
+                String concatChat = chatOfRawChatWithVertexDto + chat;
 
                 rawChatWithVertexDto.setChat(concatChat);
                 rawChatWithVertexDto.setXVertexEnd(rawChatWithVertex.getXVertexEnd());
@@ -162,6 +158,15 @@ public class TextFormatter {
     }
 }
 
+// YVertex 기준 오름차순 정렬
+class YVertexComperator implements Comparator<RawChatWithVertexDto> {
+    @Override
+    public int compare(RawChatWithVertexDto o1, RawChatWithVertexDto o2) {
+        if (o1.getYVertexStart() > o2.getYVertexStart()) return 1;
+        else if (o1.getYVertexStart() < o2.getYVertexStart()) return -1;
+        else return 0;
+    }
+}
 // FIXME : clarify 관련 초기 코드
 
 //        for (String chat : allChatsSeparatedByLines) {
