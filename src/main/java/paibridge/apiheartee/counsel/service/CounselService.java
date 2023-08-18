@@ -1,6 +1,5 @@
 package paibridge.apiheartee.counsel.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
@@ -17,7 +16,8 @@ import paibridge.apiheartee.counsel.entity.CounselReport;
 import paibridge.apiheartee.counsel.entity.CounselRequest;
 import paibridge.apiheartee.counsel.repository.CounselReportRepository;
 import paibridge.apiheartee.counsel.repository.CounselRequestRepository;
-import paibridge.apiheartee.counsel.service.gpt.GPTCounselRequestDto;
+import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselReportSaveOptionsDto;
+import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselRequestDto;
 import paibridge.apiheartee.counsel.service.gpt.GPTService;
 import paibridge.apiheartee.member.entity.Member;
 import paibridge.apiheartee.member.repository.MemberRepository;
@@ -65,12 +65,18 @@ public class CounselService {
         ////////// GPT API CALL (Event Listener or Async) ////////////
         GPTCounselRequestDto req = GPTCounselRequestDto.builder()
                 .language("ko")
-                .userGender("M")
-                .counterpartGender("M")
-                .conversationHistory(savedCounselRequest.getConversations())
+                .userGender(member.getGender())
+                .counterpartGender(savedPartner.getGender())
+                .conversationHistory(tempConversation.getData().toString())
                 .build();
 
-        gptService.callCounselGPT(req);
+        GPTCounselReportSaveOptionsDto reportSaveOptions = GPTCounselReportSaveOptionsDto.builder().dType(savedPartner.getDtype()).build();
+
+        try {
+            gptService.fetchCounselFromGPT(req, reportSaveOptions);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //////////////////////////////////////////////////////////////
 
         return savedCounselRequest.getId();
