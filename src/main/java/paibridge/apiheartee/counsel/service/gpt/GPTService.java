@@ -2,7 +2,6 @@ package paibridge.apiheartee.counsel.service.gpt;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -12,20 +11,27 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import paibridge.apiheartee.conversation.repository.TempConversationRepository;
+import paibridge.apiheartee.counsel.entity.CounselReport;
+import paibridge.apiheartee.counsel.entity.CounselReportBU;
+import paibridge.apiheartee.counsel.entity.CounselReportDT;
+import paibridge.apiheartee.counsel.entity.CounselReportGL;
+import paibridge.apiheartee.counsel.repository.CounselReportRepository;
+import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselReportSaveOptionsDto;
+import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselRequestDto;
+import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselResponseDto;
 
 import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
 public class GPTService {
-    private final TempConversationRepository tempConversationRepository;
+    private final CounselReportRepository counselReportRepository;
 
     @Value("${gpt.baseurl}")
     private String gptServerBaseURl;
 
     @Async
-    public GPTCounselResponseDto callCounselGPT(GPTCounselRequestDto request) throws IOException {
+    public void fetchCounselFromGPT(GPTCounselRequestDto request, GPTCounselReportSaveOptionsDto saveOptions) throws IOException {
         // FIXME : 로직 분리
         CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -42,7 +48,11 @@ public class GPTService {
 
             try {
                 String jsonString = EntityUtils.toString(res.getEntity());
-                return new Gson().fromJson(jsonString, GPTCounselResponseDto.class);
+                GPTCounselResponseDto gptCounselResponseDto = new Gson().fromJson(jsonString, GPTCounselResponseDto.class);
+
+                CounselReport counselReport = buildEntityToSave(gptCounselResponseDto, saveOptions);
+                this.counselReportRepository.save(counselReport);
+
             } finally {
                 res.close();
             }
@@ -50,5 +60,22 @@ public class GPTService {
         finally {
             httpClient.close();
         }
+    }
+
+    private CounselReport buildEntityToSave(GPTCounselResponseDto res, GPTCounselReportSaveOptionsDto saveOptions) {
+        String dType = saveOptions.getDType();
+
+        if (dType.equals("DT")) {
+            return CounselReportDT.builder()
+                    .build();
+        }
+        if (dType.equals("BU")) {
+                return CounselReportBU.builder().build();
+            }
+        if (dType.equals("GL")) {
+                return CounselReportGL.builder().build();
+            }
+
+        throw new RuntimeException("Invalid dType");
     }
 }
