@@ -64,7 +64,7 @@ public class GPTService {
 
     private CounselReport buildEntityToSave(GPTCounselResponseDto res, GPTCounselReportSaveOptionsDto saveOptions) {
         String dType = saveOptions.getDType();
-
+        // FIXME : Hoxfix : GPT 서버에서 정상 응답값을 확인하지 못해서 현재 빈 상태. 수정 필요
         if (dType.equals("DT")) {
             return CounselReportDT.builder()
                     .build();
