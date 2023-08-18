@@ -1,4 +1,4 @@
-package paibridge.apiheartee.counsel.service.gpt;
+package paibridge.apiheartee.counsel.service.gpt.dto;
 
 public class GPTCounselResponseDto {
 
