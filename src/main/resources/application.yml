@@ -3,8 +3,25 @@ spring:
     active: local # default
     include:
       - db
-      - log
+      - jwt
+      - oauth
+#      - log
 
 value:
   member-id:
     temp: 4 # JWT 기능 개발 전 토큰의 memberId 값 특정을 위해 임시로 사용
+url:
+  cors-allow: http://localhost:3000
+
+---
+spring.config.activate.on-profile: "local"
+url:
+  client:
+    root: http://localhost:3000
+
+---
+spring.config.activate.on-profile: "dev"
+url:
+  client:
+    root: http://localhost:3000
+
