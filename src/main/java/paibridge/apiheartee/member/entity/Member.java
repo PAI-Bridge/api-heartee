@@ -32,19 +32,30 @@ public class Member extends BaseEntity {
     private String email;
     private String name;
 
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
     private String nickname;
     private String gender;
     private Integer age;
 
+
     @Builder
-    public Member(OauthType oauthType, String oauthId, String email, String name, String nickname,
+    public Member(OauthType oauthType, String oauthId, String email, String name, Role role,
+        String nickname,
         String gender, Integer age) {
         this.oauthType = oauthType;
         this.oauthId = oauthId;
         this.email = email;
         this.name = name;
+        this.role = role;
         this.nickname = nickname;
         this.gender = gender;
         this.age = age;
+    }
+
+    public void updateOauthInfo(String name, String email) {
+        this.name = name;
+        this.email = email;
     }
 }
