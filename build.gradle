@@ -36,6 +36,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	implementation 'com.vladmihalcea:hibernate-types-52:2.20.0'
+	implementation 'com.auth0:java-jwt:4.2.1'
+
 
 	//QueryDsl 관련 의존성
 	implementation "com.querydsl:querydsl-jpa"
