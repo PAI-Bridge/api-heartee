@@ -1,10 +1,12 @@
 package paibridge.apiheartee.auth.jwt;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +42,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authenticate = jwtProvider.getAuthenticate(decodedJWT);
             SecurityContextHolder.getContext().setAuthentication(authenticate);
 
-        } catch (NullPointerException e) {
-            log.info("accessToken 없음");
-        } catch (JWTVerificationException e) {
-            log.info("유효하지 않은 토큰");
+        } catch (Exception e) {
+            log.info("accessToken이 없거나 유효하지 않음");
+            // refreshToken이 유효하면 accessToken을 재발급하여 response하고 authentication도 정상 처리
+            try {
+                String refreshToken = CookieUtil.getCookie(httpRequest, "refreshToken").getValue();
+
+                DecodedJWT decodedRefreshJWT = jwtProvider.validateToken(refreshToken);
+
+                // accessToken 재발급
+                Map<String, String> newAccessPayload = new HashMap<>();
+                newAccessPayload.put("id", decodedRefreshJWT.getClaim("id").asString());
+                newAccessPayload.put("role", "user");
+                String newAccessToken = jwtProvider.generateAccessToken(newAccessPayload);
+                //
+
+                Cookie newAccessCookie = new Cookie("accessToken", newAccessToken);
+                newAccessCookie.setPath("/");
+                response.addCookie(newAccessCookie);
+
+                request.setAttribute("user", newAccessPayload);
+                Authentication authenticate = jwtProvider.getAuthenticate(
+                    jwtProvider.validateToken(newAccessToken));
+                SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+
+            } catch (Exception re) {
+                log.info("refreshToken이 없거나 유효하지 않음");
+            }
         }
         filterChain.doFilter(request, response);
     }

@@ -40,7 +40,7 @@ public class OauthAuthenticationSuccessHandler implements AuthenticationSuccessH
         String accessToken = jwtProvider.generateAccessToken(accessPayload);
 
         HashMap<String, String> refreshPayload = new HashMap<>();
-        refreshPayload.put("id", authentication.getName());
+        refreshPayload.put("id", oauthId);
 
         String refreshToken = jwtProvider.generateRefreshToken(refreshPayload);
 
