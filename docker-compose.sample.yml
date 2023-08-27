@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  api-heartee:
+    container_name: api-heartee
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      -
+    environment:
+      SPRING_PROFILES_ACTIVE:
+    depends_on:
+      - pg_api_db
+    restart: always
+    networks:
+      -
+
+  pg_api_db:
+    image: postgres:bullseye
+    container_name: heartee-api-db
+    ports:
+      -
+    volumes:
+      -
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+    restart: always
+    networks:
+      -
+
+volumes:
+  pg_data_api:
+
+networks:
+  my-network:
