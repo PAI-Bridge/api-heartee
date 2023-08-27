@@ -1,0 +1,10 @@
+jwt:
+  secretKey: { secretKey }
+  access:
+    expiration: { expiration }
+    header: Authorization
+  refresh:
+    expiration: { expiration }
+    header: Authorization-refresh
+  group:
+    name: { name }

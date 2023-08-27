@@ -3,25 +3,28 @@ spring:
     active: local # default
     include:
       - db
+      - jwt
+      - oauth
       - aws
-      - log
       - gpt
-
-logging:
-  file:
-    path: ./logs
-    max-size: 500MB
-    max-history: 10
-  level:
-    root: info
-    paibridge.apiheartee: debug
-    org.hibernate.SQL: info
-    org.hibernate.type: info
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+#      - log
 
 value:
   member-id:
     temp: 4 # JWT 기능 개발 전 토큰의 memberId 값 특정을 위해 임시로 사용
+url:
+  cors-allow: http://localhost:3000
+
+---
+spring.config.activate.on-profile: "local"
+url:
+  client:
+    root: http://localhost:3000
+
+---
+spring.config.activate.on-profile: "dev"
+url:
+  client:
+    root: http://localhost:3000
+
+
