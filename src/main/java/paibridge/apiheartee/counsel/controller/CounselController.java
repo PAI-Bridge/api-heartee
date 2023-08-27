@@ -63,6 +63,7 @@ public class CounselController {
     public DataResponse<Map<String, Long>> createCounselAndPartner(
         @RequestBody CounselPartnerCreateDto dto) throws EntityNotFoundException {
         try {
+            System.out.println("dto = " + dto);
             Long counselId = counselService.createCounselAndPartner(memberId, dto);
 
             HashMap<String, Long> data = new HashMap<>();

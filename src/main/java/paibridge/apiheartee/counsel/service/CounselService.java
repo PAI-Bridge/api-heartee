@@ -45,6 +45,7 @@ public class CounselService {
         throws EntityNotFoundException {
 
         Member member = memberRepository.findById(memberId).orElse(null);
+        System.out.println("member = " + member);
         if (member == null) {
             throw new EntityNotFoundException("Member not found");
         }
@@ -52,16 +53,22 @@ public class CounselService {
         PartnerCreateDto partnerCreateDto = dto.getPartnerCreateDto();
         Partner partner = createPartner(member, partnerCreateDto);
         Partner savedPartner = partnerRepository.save(partner);
-
+        System.out.println("savedPartner = " + savedPartner);
         TempConversation tempConversation = tempConversationRepository.findById(
             dto.getTempConversationId()).orElse(null);
         if (tempConversation == null) {
             throw new EntityNotFoundException("TempConversation not found");
         }
-
+        System.out.println("tempConversation = " + tempConversation);
         CounselRequest counselRequest = createCounselRequest(savedPartner, tempConversation);
+        System.out.println("counselRequest = " + counselRequest);
         CounselRequest savedCounselRequest = counselRequestRepository.save(counselRequest);
+        System.out.println("savedCounselRequest = " + savedCounselRequest);
 
+        System.out.println("memberGender = " + member.getGender());
+
+        System.out.println("savedPartnerGender = " + savedPartner.getGender());
+        System.out.println("tempConversation.getData().toString() = " + tempConversation.getData().toString());
         ////////// GPT API CALL (Event Listener or Async) ////////////
         GPTCounselRequestDto req = GPTCounselRequestDto.builder()
                 .language("ko")
@@ -69,7 +76,7 @@ public class CounselService {
                 .counterpartGender(savedPartner.getGender())
                 .conversationHistory(tempConversation.getData().toString())
                 .build();
-
+        System.out.println("req = " + req);
         GPTCounselReportSaveOptionsDto reportSaveOptions = GPTCounselReportSaveOptionsDto.builder().dType(savedPartner.getDtype()).build();
 
         try {

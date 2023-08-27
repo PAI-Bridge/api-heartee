@@ -12,6 +12,13 @@ public class GPTCounselRequestDto {
     private String conversationHistory;
 
     @Builder
+    public GPTCounselRequestDto(String language, String userGender, String counterpartGender, String conversationHistory) {
+        this.language = language;
+        this.userGender = userGender;
+        this.counterpartGender = counterpartGender;
+        this.conversationHistory = conversationHistory;
+    }
+
     public static GPTCounselRequestDto create(String language, String userGender, String counterpartGender, String conversationHistory) {
         return GPTCounselRequestDto.builder()
             .language(language)

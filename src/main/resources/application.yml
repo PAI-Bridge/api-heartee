@@ -5,6 +5,7 @@ spring:
       - db
       - aws
       - log
+      - gpt
 
 logging:
   file:
