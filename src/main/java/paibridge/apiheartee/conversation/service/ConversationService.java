@@ -41,7 +41,7 @@ public class ConversationService {
         private Integer guessPrice(ArrayList<ChatDto> chatDtos) {
             // FIXME: 현재는 단순 길이로 가격 추정 중. 필요시 수정
             Integer totalLength = chatDtos.stream()
-                    .map(chat -> chat.getChat().length())
+                    .map(chat -> chat.getContent().length())
                     .reduce(0, (acc, cur) -> acc + cur);
 
             return totalLength;

@@ -5,14 +5,12 @@ import com.google.cloud.vision.v1.BoundingPoly;
 import com.google.cloud.vision.v1.EntityAnnotation;
 import com.google.cloud.vision.v1.Vertex;
 import org.springframework.stereotype.Service;
-import paibridge.apiheartee.conversation.service.image.dto.ChatDto;
-import paibridge.apiheartee.conversation.service.image.dto.Chatter;
-import paibridge.apiheartee.conversation.service.image.dto.RawChatWithVertexDto;
-import paibridge.apiheartee.conversation.service.image.dto.SquareChatAreaDto;
+import paibridge.apiheartee.conversation.service.image.dto.*;
 
 import java.io.IOException;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +22,7 @@ public class TextFormatter {
 
         // 2. y좌표의 시작, 끝이 동일한 단어들을 한 줄로 고려하여 합함.
         ArrayList<RawChatWithVertexDto> rawChatWithVertexDtos = concatWordsOfSameLine(rawChatsWithVertices);
+
         // 첫 chat은 이미지의 모든 텍스트를 포함하고 있음.
         RawChatWithVertexDto fullChatsString = rawChatsWithVertices.get(0);
         Integer imageCenterXVertex = getCenterXVertexOfImage(fullChatsString);
@@ -31,8 +30,14 @@ public class TextFormatter {
         // 3. y좌표 순서대로 순서 정렬
         Collections.sort(rawChatWithVertexDtos, new YVertexComperator());
 
-        // 4. 중앙 X 좌표값으로 발화자를 분류
-        List<ChatDto> chatDtos = clarifyChattersByXVertex(rawChatWithVertexDtos, imageCenterXVertex);
+        // 4. 추출한 텍스트 중, 전송 시각을 표시하는 텍스트는 채팅을 전송한 시점으로 포함.
+        ArrayList<ConcattedChatWithVertexAndTime> concattedChatsWithVertexAndTime = setChatSentTime(rawChatWithVertexDtos);
+//        concattedChatsWithVertexAndTime.forEach(concattedChatWithVertexAndTime -> {
+//            System.out.println("Chat= " + concattedChatWithVertexAndTime.getChat() + " SentTime= " + concattedChatWithVertexAndTime.getSentTime());
+//        });
+
+        // 5. 중앙 X 좌표값으로 발화자를 분류
+        List<ChatDto> chatDtos = clarifyAuthorsByXVertex(concattedChatsWithVertexAndTime, imageCenterXVertex);
         return (ArrayList<ChatDto>) chatDtos;
     }
 
@@ -98,8 +103,64 @@ public class TextFormatter {
         return centerXVertex;
     }
 
-    private List<ChatDto> clarifyChattersByXVertex(ArrayList<RawChatWithVertexDto> rawChatWithVertexDtos, Integer centerXVertex)  {
-        ArrayList<RawChatWithVertexDto> rawChatsWithoutFullChat = removeFullChatStringFromChatsArr(rawChatWithVertexDtos);
+    private ArrayList<ConcattedChatWithVertexAndTime> setChatSentTime(ArrayList<RawChatWithVertexDto> rawChatWithVertexDtos) {
+        HashMap<Integer, String> idxSentTimeHashMap = new HashMap<>();
+
+        Integer lastTimeTextIdx = 0;
+
+        rawChatWithVertexDtos.forEach(rawChatWithVertexDto -> {
+            String chat = rawChatWithVertexDto.getChat();
+            int idx = indexOf(rawChatWithVertexDtos, rawChatWithVertexDto);
+
+            if (isTimeText(chat)) {
+                for (int i = lastTimeTextIdx; i < idx; i++) {
+                    idxSentTimeHashMap.put(i, chat);
+                }
+
+            }
+        });
+
+        List<ConcattedChatWithVertexAndTime> concattedChatsWithVertexAndTime = rawChatWithVertexDtos.stream().map(rawChatWithVertexDto -> {
+            Integer idx = indexOf(rawChatWithVertexDtos, rawChatWithVertexDto);
+
+            // 해당 인덱스의 문자열이 시간이면, 제외함.
+            if (isTimeText(rawChatWithVertexDto.getChat())) return null;
+
+            String sentTime = idxSentTimeHashMap.get(idx);
+
+            return ConcattedChatWithVertexAndTime.concattedChatWithVertexAndTimeBuilder()
+                    .xVertexStart(rawChatWithVertexDto.getXVertexStart())
+                    .xVertexEnd(rawChatWithVertexDto.getXVertexEnd())
+                    .yVertexStart(rawChatWithVertexDto.getYVertexStart())
+                    .yVertexEnd(rawChatWithVertexDto.getYVertexEnd())
+                    .chat(rawChatWithVertexDto.getChat())
+                    .sentTime(sentTime)
+                    .build();
+        }).filter(dto -> {
+            return dto != null;
+        }).collect(Collectors.toList());
+
+        return (ArrayList<ConcattedChatWithVertexAndTime>) concattedChatsWithVertexAndTime;
+    }
+
+    private Integer indexOf(ArrayList<RawChatWithVertexDto> rawChatWithVertexDtos, RawChatWithVertexDto rawChatWithVertexDto) {
+        for (int i = 0; i < rawChatWithVertexDtos.size(); i++) {
+            RawChatWithVertexDto rawChatWithVertexDtoInArr = rawChatWithVertexDtos.get(i);
+            if (rawChatWithVertexDtoInArr.equals(rawChatWithVertexDto)) return i;
+        }
+        return -1;
+    }
+
+    private Boolean isTimeText(String text) {
+        String timeRegex = "^(오전|오후)?(\\s?\\d+[:]?\\d*)$";
+
+        Pattern pattern = Pattern.compile(timeRegex);
+
+        return pattern.matcher(text).matches();
+    }
+
+    private List<ChatDto> clarifyAuthorsByXVertex(ArrayList<ConcattedChatWithVertexAndTime> concattedChatsWithVertexAndTime, Integer centerXVertex)  {
+        ArrayList<ConcattedChatWithVertexAndTime> rawChatsWithoutFullChat = removeFullChatStringFromChatsArr(concattedChatsWithVertexAndTime);
 
          List<ChatDto> chatDtos = rawChatsWithoutFullChat.stream().map((chat) -> {
             Integer xVertexStart = chat.getXVertexStart();
@@ -109,13 +170,15 @@ public class TextFormatter {
             Integer centerXVertexOfChat = (xVertexStart + xVertexEnd) / 2;
 
             if (centerXVertexOfChat < centerXVertex) return ChatDto.builder()
-                    .chat(chat.getChat())
-                    .chatter(Chatter.PARTNER)
+                    .content(chat.getChat())
+                    .author(Author.partner)
+                    .time(chat.getSentTime())
                     .build();
 
             return ChatDto.builder()
-                    .chat(chat.getChat())
-                    .chatter(Chatter.USER)
+                    .content(chat.getChat())
+                    .author(Author.user)
+                    .time(chat.getSentTime())
                     .build();
 
         }).collect(Collectors.toList());
@@ -182,8 +245,8 @@ public class TextFormatter {
         // 기존 문자열 x좌표에서 다음 문자열의 X좌표까지의 거리가 8을 초과하면, 띄어쓰기가 되어 있던 것으로 간주함.
         return Math.abs(xVertexEndOfConcatted - xVertexStartOfNext) > spacingCriteriaVertex;
     }
-    private ArrayList<RawChatWithVertexDto> removeFullChatStringFromChatsArr(List<RawChatWithVertexDto> rawChatsWithVertices) {
-        ArrayList<RawChatWithVertexDto> rawChatsWithVerticesClone = new ArrayList<>(rawChatsWithVertices);
+    private ArrayList<ConcattedChatWithVertexAndTime> removeFullChatStringFromChatsArr(List<ConcattedChatWithVertexAndTime> concattedChatsWithVertexAndTime) {
+        ArrayList<ConcattedChatWithVertexAndTime> rawChatsWithVerticesClone = new ArrayList<>(concattedChatsWithVertexAndTime);
         rawChatsWithVerticesClone.remove(0);
 
         return rawChatsWithVerticesClone;

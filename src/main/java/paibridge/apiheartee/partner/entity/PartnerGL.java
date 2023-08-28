@@ -24,7 +24,7 @@ public class PartnerGL extends Partner {
     @Builder
     public PartnerGL(Member member, String nickname, String gender, Integer age, Mbti mbti,
         String infoGL) {
-        super(member, nickname, gender, age, mbti);
+        super(member, nickname, gender, age, mbti, Values.GL);
         this.infoGL = infoGL;
     }
 }

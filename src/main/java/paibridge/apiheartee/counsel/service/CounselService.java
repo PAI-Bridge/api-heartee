@@ -2,12 +2,16 @@ package paibridge.apiheartee.counsel.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import paibridge.apiheartee.conversation.entity.TempConversation;
 import paibridge.apiheartee.conversation.repository.TempConversationRepository;
+import paibridge.apiheartee.conversation.service.image.dto.Author;
+import paibridge.apiheartee.conversation.service.image.dto.ChatDto;
+import paibridge.apiheartee.conversation.service.image.dto.ConcattedChatWithVertexAndTime;
 import paibridge.apiheartee.counsel.dto.CounselCreateDto;
 import paibridge.apiheartee.counsel.dto.CounselDto;
 import paibridge.apiheartee.counsel.dto.CounselPartnerCreateDto;
@@ -16,6 +20,7 @@ import paibridge.apiheartee.counsel.entity.CounselReport;
 import paibridge.apiheartee.counsel.entity.CounselRequest;
 import paibridge.apiheartee.counsel.repository.CounselReportRepository;
 import paibridge.apiheartee.counsel.repository.CounselRequestRepository;
+import paibridge.apiheartee.counsel.service.gpt.dto.ChatForGPTRequestDto;
 import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselReportSaveOptionsDto;
 import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselRequestDto;
 import paibridge.apiheartee.counsel.service.gpt.GPTService;
@@ -45,7 +50,7 @@ public class CounselService {
         throws EntityNotFoundException {
 
         Member member = memberRepository.findById(memberId).orElse(null);
-        System.out.println("member = " + member);
+
         if (member == null) {
             throw new EntityNotFoundException("Member not found");
         }
@@ -53,30 +58,49 @@ public class CounselService {
         PartnerCreateDto partnerCreateDto = dto.getPartnerCreateDto();
         Partner partner = createPartner(member, partnerCreateDto);
         Partner savedPartner = partnerRepository.save(partner);
-        System.out.println("savedPartner = " + savedPartner);
+
         TempConversation tempConversation = tempConversationRepository.findById(
             dto.getTempConversationId()).orElse(null);
         if (tempConversation == null) {
             throw new EntityNotFoundException("TempConversation not found");
         }
-        System.out.println("tempConversation = " + tempConversation);
+
         CounselRequest counselRequest = createCounselRequest(savedPartner, tempConversation);
-        System.out.println("counselRequest = " + counselRequest);
+
         CounselRequest savedCounselRequest = counselRequestRepository.save(counselRequest);
-        System.out.println("savedCounselRequest = " + savedCounselRequest);
 
-        System.out.println("memberGender = " + member.getGender());
 
-        System.out.println("savedPartnerGender = " + savedPartner.getGender());
-        System.out.println("tempConversation.getData().toString() = " + tempConversation.getData().toString());
         ////////// GPT API CALL (Event Listener or Async) ////////////
+        // FIXME : 텍스트 추출 단계에서 partner의 이름을 별도로 인식할 방법이 마땅히 생각이 안남 ㅠ
+        // FIXME : partner의 nickname을 카톡에 표시되는 이름과 동일, 혹은 유사하게 작성한다는 전제 하에, 호출시 이를 filtering하는 방식으로 구현
+        List<ChatForGPTRequestDto> chatsNicknameFiltered = tempConversation.getData().stream().filter(chat -> chat.getContent() != partner.getNickname()).map(chat -> {
+            if (chat.getAuthor() == Author.partner) {
+                return ChatForGPTRequestDto.builder()
+                        .author(partner.getNickname())
+                        .content(chat.getContent())
+                        .time(chat.getTime())
+                        .build();
+            }
+                return ChatForGPTRequestDto.builder()
+                        .author("user")
+                        .content(chat.getContent())
+                        .time(chat.getTime())
+                        .build();
+
+        }).collect(Collectors.toList());
+
+        // FIXME : GPT 호출하는 부분에서 계속 500 혹은 422가 뜨는데, conversationHistory를 stringify하는 방식이 의도와 다른 것으로 추정..
+        List<String> chats = chatsNicknameFiltered.stream().map(chat -> {
+            return "{{author: \"" + chat.getAuthor() + "\"" + ", " + "content:\"" + chat.getContent() + "\"" + ", " + "time:\"" + chat.getTime() + "\"" + "}}";
+        }).collect(Collectors.toList());
+
         GPTCounselRequestDto req = GPTCounselRequestDto.builder()
-                .language("ko")
+                .language("Korean")
                 .userGender(member.getGender())
                 .counterpartGender(savedPartner.getGender())
-                .conversationHistory(tempConversation.getData().toString())
+                .conversationHistory("[" + String.join(", ", chats) + "]")
                 .build();
-        System.out.println("req = " + req);
+
         GPTCounselReportSaveOptionsDto reportSaveOptions = GPTCounselReportSaveOptionsDto.builder().dType(savedPartner.getDtype()).build();
 
         try {
@@ -119,8 +143,7 @@ public class CounselService {
     }
 
     private Partner createPartner(Member member, PartnerCreateDto dto) {
-
-        if (dto.getDtype().equals(Values.GL)) {
+        if (dto.getDType().equals(Values.GL)) {
             return PartnerGL.builder()
                 .member(member)
                 .nickname(dto.getNickname())
@@ -131,7 +154,7 @@ public class CounselService {
                 .build();
         }
 
-        if (dto.getDtype().equals(Values.DT)) {
+        if (dto.getDType().equals(Values.DT)) {
             return PartnerDT.builder()
                 .member(member)
                 .nickname(dto.getNickname())
@@ -142,7 +165,7 @@ public class CounselService {
                 .build();
         }
 
-        if (dto.getDtype().equals(Values.BU)) {
+        if (dto.getDType().equals(Values.BU)) {
             return PartnerBU.builder()
                 .member(member)
                 .nickname(dto.getNickname())

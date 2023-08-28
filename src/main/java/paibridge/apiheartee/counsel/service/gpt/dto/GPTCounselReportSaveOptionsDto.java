@@ -8,6 +8,10 @@ public class GPTCounselReportSaveOptionsDto {
     private String dType;
 
     @Builder
+    public GPTCounselReportSaveOptionsDto(String dType) {
+        this.dType = dType;
+    }
+
     public static GPTCounselReportSaveOptionsDto create(String dType) {
         return GPTCounselReportSaveOptionsDto.builder()
                 .dType(dType)
