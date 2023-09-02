@@ -3,20 +3,22 @@ package paibridge.apiheartee.auth.oauth;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
+import lombok.extern.slf4j.Slf4j;
 import paibridge.apiheartee.member.dto.MemberOauthDto;
 import paibridge.apiheartee.member.entity.OauthType;
 
 
+@Slf4j
 public enum OauthAttributes {
-    //    KAKAO("kakao", (attributes) -> {
-//        return new MemberOauthDto(
-//            OauthType.KAKAO,
-//            String.valueOf(attributes.get("sub")),
-//            (String) attributes.get("name"),
-//            (String) attributes.get("email"),
-//            (String) attributes.get("picture")
-//        );
-//    }),
+    KAKAO("kakao", (attributes) -> {
+        log.info(attributes.toString());
+        return new MemberOauthDto(
+            OauthType.KAKAO,
+            String.valueOf(attributes.get("sub")),
+            (String) attributes.get("name"),
+            (String) attributes.get("email")
+        );
+    }),
     GOOGLE("google", (attributes) -> {
         return new MemberOauthDto(
             OauthType.GOOGLE,
