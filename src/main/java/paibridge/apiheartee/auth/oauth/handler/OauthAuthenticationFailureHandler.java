@@ -20,7 +20,7 @@ public class OauthAuthenticationFailureHandler implements AuthenticationFailureH
         response.setCharacterEncoding("UTF-8");
 
         JSONObject resData = new JSONObject();
-        resData.put("code", 402);
+        resData.put("code", 401);
         resData.put("message", exception.getMessage());
 
         response.getWriter().write(resData.toString());
