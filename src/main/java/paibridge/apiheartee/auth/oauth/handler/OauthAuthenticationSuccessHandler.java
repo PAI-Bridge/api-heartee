@@ -3,7 +3,6 @@ package paibridge.apiheartee.auth.oauth.handler;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -32,17 +31,14 @@ public class OauthAuthenticationSuccessHandler implements AuthenticationSuccessH
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
 
-        String userData = authentication.getName();
-        String oauthId = Arrays.stream(userData.split(",")).findFirst().get().substring(4);
-
         Map<String, String> accessPayload = new HashMap<>();
-        accessPayload.put("id", oauthId);
+        accessPayload.put("id", authentication.getName());
         accessPayload.put("role", "user");
 
         String accessToken = jwtProvider.generateAccessToken(accessPayload);
 
         HashMap<String, String> refreshPayload = new HashMap<>();
-        refreshPayload.put("id", oauthId);
+        refreshPayload.put("id", authentication.getName());
 
         String refreshToken = jwtProvider.generateRefreshToken(refreshPayload);
 
