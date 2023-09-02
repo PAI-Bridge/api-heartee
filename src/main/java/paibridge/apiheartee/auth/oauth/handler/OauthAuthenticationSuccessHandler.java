@@ -1,6 +1,8 @@
 package paibridge.apiheartee.auth.oauth.handler;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,8 +52,17 @@ public class OauthAuthenticationSuccessHandler implements AuthenticationSuccessH
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
         refreshCookie.setPath("/");
 
+        String redirectPath = "/";
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("redirectPath")) {
+                redirectPath = cookie.getValue();
+            }
+        }
+        redirectPath = URLDecoder.decode(redirectPath, StandardCharsets.UTF_8);
+
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
-        response.sendRedirect(CLIENT_ROOT_URL);
+        response.sendRedirect(CLIENT_ROOT_URL + redirectPath);
     }
 }
