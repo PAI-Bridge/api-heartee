@@ -2,16 +2,18 @@ package paibridge.apiheartee.partner.controller;
 
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import paibridge.apiheartee.auth.jwt.JwtProvider;
 import paibridge.apiheartee.common.dto.DataArrayResponse;
 import paibridge.apiheartee.common.dto.DataResponse;
+import paibridge.apiheartee.member.service.MemberService;
 import paibridge.apiheartee.partner.dto.PartnerDto;
 import paibridge.apiheartee.partner.service.PartnerService;
 
@@ -22,13 +24,18 @@ import paibridge.apiheartee.partner.service.PartnerService;
 public class PartnerController {
 
     private final PartnerService partnerService;
-
-    @Value("${value.member-id.temp}")
-    private Long memberId;  //인증 개발 이후 JWT 추출 값으로 대체 (temp)
+    private final MemberService memberService;
+    private final JwtProvider jwtProvider;
 
     @GetMapping
     public DataArrayResponse<PartnerDto> findPartners(
-        @RequestParam(required = false) String dtype) {
+        @RequestParam(required = false) String dtype,
+        HttpServletRequest request) {
+
+        String oauthId = (String) request.getAttribute("oauthId");
+
+        Long memberId = memberService.findMemberIdByOauthId(oauthId);
+        log.info("memberId = {}", memberId);
 
         List<PartnerDto> partners = partnerService.findPartners(memberId, dtype);
 
