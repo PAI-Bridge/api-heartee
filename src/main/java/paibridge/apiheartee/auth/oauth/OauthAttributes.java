@@ -12,11 +12,14 @@ import paibridge.apiheartee.member.entity.OauthType;
 public enum OauthAttributes {
     KAKAO("kakao", (attributes) -> {
         log.info(attributes.toString());
+        Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+        Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
+
         return new MemberOauthDto(
             OauthType.KAKAO,
-            String.valueOf(attributes.get("sub")),
-            (String) attributes.get("name"),
-            (String) attributes.get("email")
+            String.valueOf(attributes.get("id")),
+            (String) properties.get("nickname"),
+            (String) account.get("email")
         );
     }),
     GOOGLE("google", (attributes) -> {
