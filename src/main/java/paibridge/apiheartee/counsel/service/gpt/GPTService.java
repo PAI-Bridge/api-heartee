@@ -22,7 +22,6 @@ import paibridge.apiheartee.counsel.repository.CounselReportRepository;
 import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselJsonResDto;
 import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselReportSaveOptionsDto;
 import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselRequestDto;
-import paibridge.apiheartee.counsel.service.gpt.dto.GPTCounselResponseDto;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -51,7 +50,6 @@ public class GPTService {
 
             CloseableHttpResponse res = httpClient.execute(postRequest);
 
-            // temperature, summary, solution, stat
             try {
                 String jsonString = EntityUtils.toString(res.getEntity());
 
@@ -98,9 +96,8 @@ public class GPTService {
 
         if (matcher.find()) {
             String jsonString = "{" + matcher.group(1) + "}";
-            ObjectMapper objectMapper = new ObjectMapper();
-            System.out.println("json parse string = " + jsonString);
             GPTCounselJsonResDto gptCounselJsonResDto = new Gson().fromJson(jsonString, GPTCounselJsonResDto.class);
+
             return gptCounselJsonResDto;
 
         }
@@ -114,16 +111,41 @@ public class GPTService {
         if (dType.equals("DT")) {
             return CounselReportDT.builder()
                     .counselRequest(saveOptions.getCounselRequest())
-                    .solution(res.getSolution())
                     .summary(summary)
-                    .temperature(50)
+                    .solution(res.getSolution())
+                    .willingness(Integer.parseInt(res.getWillingness()))
+                    .selfOpenness(Integer.parseInt(res.getSelfOpenness()))
+                    .voiceOver(Integer.parseInt(res.getVoiceover()))
+                    .positiveLanguage(Integer.parseInt(res.getPositiveLanguage()))
+                    .frequency(Integer.parseInt(res.getFrequency()))
+                    .explanation(res.getExplanation())
                     .build();
         }
         if (dType.equals("BU")) {
-                return CounselReportBU.builder().build();
+                return CounselReportBU.builder()
+                        .counselRequest(saveOptions.getCounselRequest())
+                        .summary(summary)
+                        .solution(res.getSolution())
+                        .willingness(Integer.parseInt(res.getWillingness()))
+                        .selfOpenness(Integer.parseInt(res.getSelfOpenness()))
+                        .voiceOver(Integer.parseInt(res.getVoiceover()))
+                        .positiveLanguage(Integer.parseInt(res.getPositiveLanguage()))
+                        .frequency(Integer.parseInt(res.getFrequency()))
+                        .explanation(res.getExplanation())
+                        .build();
             }
         if (dType.equals("GL")) {
-                return CounselReportGL.builder().build();
+                return CounselReportGL.builder()
+                        .counselRequest(saveOptions.getCounselRequest())
+                        .summary(summary)
+                        .solution(res.getSolution())
+                        .willingness(Integer.parseInt(res.getWillingness()))
+                        .selfOpenness(Integer.parseInt(res.getSelfOpenness()))
+                        .voiceOver(Integer.parseInt(res.getVoiceover()))
+                        .positiveLanguage(Integer.parseInt(res.getPositiveLanguage()))
+                        .frequency(Integer.parseInt(res.getFrequency()))
+                        .explanation(res.getExplanation())
+                        .build();
             }
 
         throw new RuntimeException("Invalid dType");
