@@ -10,12 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import paibridge.apiheartee.conversation.entity.TempConversation;
 import paibridge.apiheartee.conversation.repository.TempConversationRepository;
 import paibridge.apiheartee.conversation.service.image.dto.Author;
-import paibridge.apiheartee.conversation.service.image.dto.ChatDto;
-import paibridge.apiheartee.conversation.service.image.dto.ConcattedChatWithVertexAndTime;
 import paibridge.apiheartee.counsel.dto.CounselCreateDto;
 import paibridge.apiheartee.counsel.dto.CounselDto;
 import paibridge.apiheartee.counsel.dto.CounselPartnerCreateDto;
-import paibridge.apiheartee.counsel.entity.CategoryType.Values;
 import paibridge.apiheartee.counsel.entity.CounselReport;
 import paibridge.apiheartee.counsel.entity.CounselRequest;
 import paibridge.apiheartee.counsel.repository.CounselReportRepository;
@@ -28,16 +25,15 @@ import paibridge.apiheartee.member.entity.Member;
 import paibridge.apiheartee.member.repository.MemberRepository;
 import paibridge.apiheartee.partner.dto.PartnerCreateDto;
 import paibridge.apiheartee.partner.entity.Partner;
-import paibridge.apiheartee.partner.entity.PartnerBU;
-import paibridge.apiheartee.partner.entity.PartnerDT;
-import paibridge.apiheartee.partner.entity.PartnerGL;
 import paibridge.apiheartee.partner.repository.PartnerRepository;
+import paibridge.apiheartee.partner.service.PartnerService;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CounselService {
 
+    private final PartnerService partnerService;
     private final PartnerRepository partnerRepository;
     private final MemberRepository memberRepository;
     private final TempConversationRepository tempConversationRepository;
@@ -56,8 +52,7 @@ public class CounselService {
         }
 
         PartnerCreateDto partnerCreateDto = dto.getPartnerCreateDto();
-        Partner partner = createPartner(member, partnerCreateDto);
-        Partner savedPartner = partnerRepository.save(partner);
+        Partner savedPartner = partnerService.createPartner(member, partnerCreateDto);
 
         TempConversation tempConversation = tempConversationRepository.findById(
             dto.getTempConversationId()).orElse(null);
@@ -69,49 +64,17 @@ public class CounselService {
 
         CounselRequest savedCounselRequest = counselRequestRepository.save(counselRequest);
 
-
         ////////// GPT API CALL (Event Listener or Async) ////////////
         // FIXME : 텍스트 추출 단계에서 partner의 이름을 별도로 인식할 방법이 마땅히 생각이 안남 ㅠ
         // FIXME : partner의 nickname을 카톡에 표시되는 이름과 동일, 혹은 유사하게 작성한다는 전제 하에, 호출시 이를 filtering하는 방식으로 구현
-        List<ChatForGPTRequestDto> chatsNicknameFiltered = tempConversation.getData().stream().filter(chat -> chat.getContent() != partner.getNickname()).map(chat -> {
-            if (chat.getAuthor() == Author.partner) {
-                return ChatForGPTRequestDto.builder()
-                        .author(partner.getNickname())
-                        .content(chat.getContent())
-                        .time(chat.getTime())
-                        .build();
-            }
-                return ChatForGPTRequestDto.builder()
-                        .author("user")
-                        .content(chat.getContent())
-                        .time(chat.getTime())
-                        .build();
+        saveGPTCounsel(savedCounselRequest, tempConversation, member, savedPartner);
 
-        }).collect(Collectors.toList());
-
-        // FIXME : GPT 호출하는 부분에서 계속 500 혹은 422가 뜨는데, conversationHistory를 stringify하는 방식이 의도와 다른 것으로 추정..
-        List<String> chats = chatsNicknameFiltered.stream().map(chat -> {
-            return "{{author: \"" + chat.getAuthor() + "\"" + ", " + "content:\"" + chat.getContent() + "\"" + ", " + "time:\"" + chat.getTime() + "\"" + "}}";
-        }).collect(Collectors.toList());
-
-        GPTCounselRequestDto req = GPTCounselRequestDto.builder()
-                .language("Korean")
-                .userGender(member.getGender())
-                .counterpartGender(savedPartner.getGender())
-                .conversationHistory("[" + String.join(", ", chats) + "]")
-                .build();
-
-        GPTCounselReportSaveOptionsDto reportSaveOptions = GPTCounselReportSaveOptionsDto.builder().dType(savedPartner.getDtype()).build();
-
-        try {
-            gptService.fetchCounselFromGPT(req, reportSaveOptions);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         //////////////////////////////////////////////////////////////
 
         return savedCounselRequest.getId();
     }
+
+
 
 
     @Transactional
@@ -136,47 +99,81 @@ public class CounselService {
         CounselRequest savedCounselRequest = counselRequestRepository.save(counselRequest);
 
         ////////// GPT API CALL (Event Listener or Async) ////////////
-
+        saveGPTCounsel(savedCounselRequest, tempConversation, member, partner);
         //////////////////////////////////////////////////////////////
 
         return savedCounselRequest.getId();
     }
 
-    private Partner createPartner(Member member, PartnerCreateDto dto) {
-        if (dto.getDType().equals(Values.GL)) {
-            return PartnerGL.builder()
-                .member(member)
-                .nickname(dto.getNickname())
-                .gender(dto.getGender())
-                .age(dto.getAge())
-                .mbti(dto.getMbti())
-                .infoGL(dto.getInfoGL())
-                .build();
-        }
+    private void saveGPTCounsel(CounselRequest counselRequest, TempConversation tempConversation, Member member, Partner partner) {
+        List<ChatForGPTRequestDto> chatsNicknameFiltered = tempConversation.getData().stream().filter(chat -> !chat.getContent().equals(partner.getNickname())).map(chat -> {
+            if (chat.getAuthor() == Author.partner) {
+                return ChatForGPTRequestDto.builder()
+                        .author(partner.getNickname())
+                        .content(chat.getContent())
+                        .time(chat.getTime())
+                        .build();
+            }
+            return ChatForGPTRequestDto.builder()
+                    .author("user")
+                    .content(chat.getContent())
+                    .time(chat.getTime())
+                    .build();
 
-        if (dto.getDType().equals(Values.DT)) {
-            return PartnerDT.builder()
-                .member(member)
-                .nickname(dto.getNickname())
-                .gender(dto.getGender())
-                .age(dto.getAge())
-                .mbti(dto.getMbti())
-                .infoDT(dto.getInfoDT())
-                .build();
-        }
+        }).collect(Collectors.toList());
 
-        if (dto.getDType().equals(Values.BU)) {
-            return PartnerBU.builder()
-                .member(member)
-                .nickname(dto.getNickname())
-                .gender(dto.getGender())
-                .age(dto.getAge())
-                .mbti(dto.getMbti())
-                .infoBU(dto.getInfoBU())
+        String conversationHistoryString = buildConversationHistory(chatsNicknameFiltered);
+        GPTCounselRequestDto req = GPTCounselRequestDto.builder()
+                .language("Korean")
+                .user_gender(member.getGender())
+                .counterpart_gender(partner.getGender())
+                .conversation_history(conversationHistoryString)
                 .build();
-        }
 
-        throw new IllegalArgumentException("partner.dtype is invalid");
+        GPTCounselReportSaveOptionsDto reportSaveOptions = GPTCounselReportSaveOptionsDto.builder()
+                .dType(partner.getDtype())
+                .counselRequest(counselRequest)
+                .build();
+
+        try {
+            gptService.fetchCounsel(req, reportSaveOptions);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String buildConversationHistory(List<ChatForGPTRequestDto> chatsForGPTRequestDtos) {
+        String BACKTICK = "\\";
+        String QUOTATION = "\"";
+
+        List<String> chats = chatsForGPTRequestDtos.stream().map(chat -> {
+            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilt = stringBuilder
+                    .append("{author: ")
+                    .append(BACKTICK)
+                    .append(QUOTATION)
+                    .append(chat.getAuthor())
+                    .append(BACKTICK)
+                    .append(QUOTATION)
+                    .append(", ")
+                    .append("content:")
+                    .append(BACKTICK)
+                    .append(QUOTATION)
+                    .append(chat.getContent())
+                    .append(BACKTICK)
+                    .append(QUOTATION)
+                    .append(", ")
+                    .append("time:")
+                    .append(BACKTICK)
+                    .append(QUOTATION)
+                    .append(chat.getTime())
+                    .append(BACKTICK)
+                    .append(QUOTATION)
+                    .append("}");
+            return stringBuilt.toString();
+        }).collect(Collectors.toList());
+
+        return "[" + String.join(", ", chats) + "]";
     }
 
     private CounselRequest createCounselRequest(Partner partner,
