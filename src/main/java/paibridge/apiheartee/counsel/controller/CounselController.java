@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +22,7 @@ import paibridge.apiheartee.counsel.dto.CounselCreateDto;
 import paibridge.apiheartee.counsel.dto.CounselDto;
 import paibridge.apiheartee.counsel.dto.CounselPartnerCreateDto;
 import paibridge.apiheartee.counsel.service.CounselService;
+import paibridge.apiheartee.member.service.MemberService;
 
 @Slf4j
 @RestController
@@ -30,9 +31,7 @@ import paibridge.apiheartee.counsel.service.CounselService;
 public class CounselController {
 
     private final CounselService counselService;
-
-    @Value("${value.member-id.temp}")
-    private Long memberId;  //인증 개발 이후 JWT 추출 값으로 대체 (temp)
+    private final MemberService memberService;
 
     @GetMapping
     public DataArrayResponse<CounselDto> findCounsels(
@@ -61,9 +60,12 @@ public class CounselController {
     @PostMapping("/new")
     @ResponseStatus(code = HttpStatus.CREATED)
     public DataResponse<Map<String, Long>> createCounselAndPartner(
-        @RequestBody CounselPartnerCreateDto dto) throws EntityNotFoundException {
+        @RequestBody CounselPartnerCreateDto dto, HttpServletRequest request)
+        throws EntityNotFoundException {
         try {
-            System.out.println("dto = " + dto);
+            String oauthId = (String) request.getAttribute("oauthId");
+
+            Long memberId = memberService.findMemberIdByOauthId(oauthId);
             Long counselId = counselService.createCounselAndPartner(memberId, dto);
 
             HashMap<String, Long> data = new HashMap<>();
@@ -76,11 +78,15 @@ public class CounselController {
         }
     }
 
-    @PostMapping("/not-new")
+    @PostMapping("/add")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public DataResponse<Map<String, Long>> createCounsel(@RequestBody CounselCreateDto dto)
+    public DataResponse<Map<String, Long>> createCounsel(@RequestBody CounselCreateDto dto,
+        HttpServletRequest request)
         throws EntityNotFoundException {
         try {
+            String oauthId = (String) request.getAttribute("oauthId");
+
+            Long memberId = memberService.findMemberIdByOauthId(oauthId);
             Long counselId = counselService.createCounsel(memberId, dto);
 
             HashMap<String, Long> data = new HashMap<>();

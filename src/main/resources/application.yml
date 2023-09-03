@@ -9,9 +9,6 @@ spring:
       - gpt
 #      - log
 
-value:
-  member-id:
-    temp: 4 # JWT 기능 개발 전 토큰의 memberId 값 특정을 위해 임시로 사용
 url:
   cors-allow: http://localhost:3000
 

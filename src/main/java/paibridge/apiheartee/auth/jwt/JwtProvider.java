@@ -32,7 +32,7 @@ public class JwtProvider {
     @Value("${jwt.group.name}")
     private String ISSUER;
 
-    private String getOauthId(DecodedJWT token) {
+    public String getOauthId(DecodedJWT token) {
         return token.getClaim("id").asString();
     }
 

@@ -120,7 +120,7 @@ public class InitDb {
                 .infoGL("타입 GL에 대한 질문의 응답")
                 .build();
 
-            PartnerDT partner2 = PartnerDT.builder()
+            Partner partner2 = PartnerDT.builder()
                 .member(member1)
                 .nickname("민용여친")
                 .gender("female")
@@ -129,7 +129,7 @@ public class InitDb {
                 .infoDT("타입 DT에 대한 질문의 응답")
                 .build();
 
-            PartnerBU partner3 = PartnerBU.builder()
+            Partner partner3 = PartnerBU.builder()
                 .member(member2)
                 .nickname("동민전여친")
                 .gender("female")
