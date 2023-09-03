@@ -114,7 +114,8 @@ public class TextFormatter {
 
             if (isTimeText(chat)) {
                 for (int i = lastTimeTextIdx; i < idx; i++) {
-                    idxSentTimeHashMap.put(i, chat);
+                    // 오후, 또는 오전이라는 문자열은 제외함
+                    idxSentTimeHashMap.put(i, chat.replaceAll("오후|오전", "").replaceAll("\\s", ""));
                 }
 
             }
