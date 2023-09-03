@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //토큰 유효성 검증
             DecodedJWT decodedJWT = jwtProvider.validateToken(token);
 
-            request.setAttribute("user", decodedJWT.getPayload());
+            request.setAttribute("oauthId", jwtProvider.getOauthId(decodedJWT));
             Authentication authenticate = jwtProvider.getAuthenticate(decodedJWT);
             SecurityContextHolder.getContext().setAuthentication(authenticate);
 
@@ -52,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // accessToken 재발급
                 Map<String, String> newAccessPayload = new HashMap<>();
-                newAccessPayload.put("id", decodedRefreshJWT.getClaim("id").asString());
+                newAccessPayload.put("id", jwtProvider.getOauthId(decodedRefreshJWT));
                 newAccessPayload.put("role", "user");
                 String newAccessToken = jwtProvider.generateAccessToken(newAccessPayload);
                 //
@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 newAccessCookie.setPath("/");
                 response.addCookie(newAccessCookie);
 
-                request.setAttribute("user", newAccessPayload);
+                request.setAttribute("oauthId", newAccessPayload.get("id"));
                 Authentication authenticate = jwtProvider.getAuthenticate(
                     jwtProvider.validateToken(newAccessToken));
                 SecurityContextHolder.getContext().setAuthentication(authenticate);
