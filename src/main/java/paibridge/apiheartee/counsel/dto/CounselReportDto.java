@@ -14,17 +14,16 @@ public class CounselReportDto {
     private String summary;
     private String solution;
 
-    private Double willingness;
-    private Double selfOpenness;
-    private Double voiceOver;
-    private Double positiveLanguage;
-    private Double frequency;
+    private Integer willingness;
+    private Integer selfOpenness;
+    private Integer voiceOver;
+    private Integer positiveLanguage;
+    private Integer frequency;
+
     private String explanation;
 
-
-
     @Builder
-    public CounselReportDto(String summary, String solution, Double willingness, Double selfOpenness, Double voiceOver, Double positiveLanguage, Double frequency, String explanation) {
+    public CounselReportDto(String summary, String solution, Integer willingness, Integer selfOpenness, Integer voiceOver, Integer positiveLanguage, Integer frequency, String explanation) {
         this.summary = summary;
         this.solution = solution;
         this.willingness = willingness;

@@ -39,19 +39,19 @@ public abstract class CounselReport extends BaseEntity {
     private String solution;
 
     @Column(name = "willingness")
-    private Double willingness; //모든 유형 공통 수치, 컬럼명 미정
+    private Integer willingness;
 
     @Column(name = "self_openness")
-    private Double selfOpenness; //   모든 유형 공통 수치, 컬럼명 미정
+    private Integer selfOpenness;
 
     @Column(name = "voice_over")
-    private Double voiceOver;
+    private Integer voiceOver;
 
     @Column(name = "positive_language")
-    private Double positiveLanguage;
+    private Integer positiveLanguage;
 
     @Column(name = "frequency")
-    private Double frequency;
+    private Integer frequency;
 
     @Column(name = "explanation")
     private String explanation;
@@ -60,7 +60,7 @@ public abstract class CounselReport extends BaseEntity {
     private String dtype;
 
     public CounselReport(CounselRequest counselRequest, String summary,
-        String solution, Double willingness, Double selfOpenness, Double voiceOver, Double positiveLanguage, Double frequency, String explanation) {
+        String solution, Integer willingness, Integer selfOpenness, Integer voiceOver, Integer positiveLanguage, Integer frequency, String explanation) {
         this.counselRequest = counselRequest;
         this.summary = summary;
         this.solution = solution;
