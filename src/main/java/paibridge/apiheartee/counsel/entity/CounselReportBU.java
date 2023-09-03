@@ -19,7 +19,7 @@ public class CounselReportBU extends CounselReport {
 
     @Builder
     public CounselReportBU(CounselRequest counselRequest, String summary,
-        String solution,  Double willingness, Double selfOpenness, Double voiceOver, Double positiveLanguage, Double frequency, String explanation) {
+        String solution, Integer willingness, Integer selfOpenness, Integer voiceOver, Integer positiveLanguage, Integer frequency, String explanation) {
         super(counselRequest, summary, solution, willingness, selfOpenness, voiceOver, positiveLanguage, frequency, explanation);
 //        this.statBU = statBU;
     }
