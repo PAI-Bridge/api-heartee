@@ -39,7 +39,7 @@ public class InitDb {
         initService.categoryInit();
         initService.memberInit();
         initService.partnerInit();
-        initService.tempConversationInit();
+//        initService.tempConversationInit();
         initService.counselRequestInit();
         initService.counselReportInit();
     }
@@ -143,31 +143,31 @@ public class InitDb {
             em.persist(partner3);
         }
 
-        public void tempConversationInit() {
-            JSONObject obj1 = new JSONObject();
-            obj1.put("a", "asdf");
-            obj1.put("b", 123);
-            obj1.put("3", new JSONObject());
-
-            TempConversation tempConversation1 = TempConversation.builder()
-                .price(1000)
-                .data(obj1)
-                .build();
-
-            em.persist(tempConversation1);
-
-            JSONObject obj2 = new JSONObject();
-            obj2.put("a", "asdf");
-            obj2.put("b", 123);
-            obj2.put("3", new JSONObject());
-
-            TempConversation tempConversation2 = TempConversation.builder()
-                .price(500)
-                .data(obj2)
-                .build();
-
-            em.persist(tempConversation2);
-        }
+//        public void tempConversationInit() {
+//            JSONObject obj1 = new JSONObject();
+//            obj1.put("a", "asdf");
+//            obj1.put("b", 123);
+//            obj1.put("3", new JSONObject());
+//
+//            TempConversation tempConversation1 = TempConversation.builder()
+//                .price(1000)
+//                .data(obj1)
+//                .build();
+//
+//            em.persist(tempConversation1);
+//
+//            JSONObject obj2 = new JSONObject();
+//            obj2.put("a", "asdf");
+//            obj2.put("b", 123);
+//            obj2.put("3", new JSONObject());
+//
+//            TempConversation tempConversation2 = TempConversation.builder()
+//                .price(500)
+//                .data(obj2)
+//                .build();
+//
+//            em.persist(tempConversation2);
+//        }
 
         public void counselRequestInit() {
             Partner partner = partnerRepository.findById(6L).orElse(null);
@@ -201,32 +201,38 @@ public class InitDb {
             if (dtype.equals(Values.GL)) {
                 counselReport = CounselReportGL.builder()
                     .counselRequest(counselRequest)
-                    .temperature(80)
-                    .summary("summary 샘플입니다.")
+                        .summary("summary 샘플입니다.")
                     .solution("solution 샘플입니다.")
-                    .statA(60)
-                    .statB(68)
-                    .statGL(78)
+                        .willingness(8)
+                        .selfOpenness(2)
+                        .voiceOver(4)
+                        .positiveLanguage(6)
+                        .frequency(2)
+                        .explanation("explanation 샘플입니다.")
                     .build();
+
             } else if (dtype.equals(Values.DT)) {
                 counselReport = CounselReportDT.builder()
                     .counselRequest(counselRequest)
-                    .temperature(80)
                     .summary("summary 샘플입니다.")
                     .solution("solution 샘플입니다.")
-                    .statA(60)
-                    .statB(68)
-                    .statDT(78)
+                        .willingness(8)
+                        .selfOpenness(2)
+                        .voiceOver(4)
+                        .positiveLanguage(6)
+                        .frequency(2)
                     .build();
+
             } else if (dtype.equals(Values.BU)) {
                 counselReport = CounselReportBU.builder()
                     .counselRequest(counselRequest)
-                    .temperature(80)
                     .summary("summary 샘플입니다.")
                     .solution("solution 샘플입니다.")
-                    .statA(60)
-                    .statB(68)
-                    .statBU(78)
+                        .willingness(8)
+                        .selfOpenness(2)
+                        .voiceOver(4)
+                        .positiveLanguage(6)
+                        .frequency(2)
                     .build();
             }
             em.persist(counselReport);

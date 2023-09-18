@@ -10,7 +10,7 @@ public class PartnerCreateDto {
     private String gender;
     private Integer age;
     private Mbti mbti;
-    private String dtype;
+    private String dType;
 
     private String infoGL;
     private String infoDT;

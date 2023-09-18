@@ -14,6 +14,10 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import paibridge.apiheartee.common.entity.BaseEntity;
+import paibridge.apiheartee.conversation.service.image.dto.ChatDto;
+import paibridge.apiheartee.conversation.service.image.dto.ConcattedChatWithVertexAndTime;
+
+import java.util.ArrayList;
 
 @Entity
 @Getter
@@ -31,10 +35,10 @@ public class TempConversation extends BaseEntity {
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-    private Object data;
+    private ArrayList<ChatDto> data;
 
     @Builder
-    public TempConversation(Integer price, Object data) {
+    public TempConversation(Integer price, ArrayList<ChatDto> data) {
         this.price = price;
         this.data = data;
     }

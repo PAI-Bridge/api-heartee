@@ -5,6 +5,8 @@ spring:
       - db
       - jwt
       - oauth
+      - aws
+      - gpt
 #      - log
 
 url:
@@ -21,4 +23,5 @@ spring.config.activate.on-profile: "dev"
 url:
   client:
     root: http://localhost:3000
+
 

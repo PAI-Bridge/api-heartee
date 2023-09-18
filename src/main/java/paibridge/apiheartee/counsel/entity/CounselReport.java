@@ -35,27 +35,40 @@ public abstract class CounselReport extends BaseEntity {
     @JoinColumn(name = "counsel_request_id")
     private CounselRequest counselRequest;
 
-    private Integer temperature;
     private String summary;
     private String solution;
 
-    @Column(name = "stat_a")
-    private Integer statA; //모든 유형 공통 수치, 컬럼명 미정
+    @Column(name = "willingness")
+    private Integer willingness;
 
-    @Column(name = "stat_b")
-    private Integer statB; //   모든 유형 공통 수치, 컬럼명 미정
+    @Column(name = "self_openness")
+    private Integer selfOpenness;
+
+    @Column(name = "voice_over")
+    private Integer voiceOver;
+
+    @Column(name = "positive_language")
+    private Integer positiveLanguage;
+
+    @Column(name = "frequency")
+    private Integer frequency;
+
+    @Column(name = "explanation")
+    private String explanation;
 
     @Column(insertable = false, updatable = false) //자동 생성 컬럼인 dtype의 충돌 방지 + Getter 사용
     private String dtype;
 
-    public CounselReport(CounselRequest counselRequest, Integer temperature, String summary,
-        String solution, Integer statA,
-        Integer statB) {
+    public CounselReport(CounselRequest counselRequest, String summary,
+        String solution, Integer willingness, Integer selfOpenness, Integer voiceOver, Integer positiveLanguage, Integer frequency, String explanation) {
         this.counselRequest = counselRequest;
-        this.temperature = temperature;
         this.summary = summary;
         this.solution = solution;
-        this.statA = statA;
-        this.statB = statB;
+        this.willingness = willingness;
+        this.selfOpenness = selfOpenness;
+        this.voiceOver = voiceOver;
+        this.positiveLanguage = positiveLanguage;
+        this.frequency = frequency;
+        this.explanation = explanation;
     }
 }

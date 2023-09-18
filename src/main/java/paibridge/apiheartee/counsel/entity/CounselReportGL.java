@@ -17,14 +17,9 @@ import paibridge.apiheartee.counsel.entity.CategoryType.Values;
 @Table(name = "counsel_report_gl")
 public class CounselReportGL extends CounselReport {
 
-    @Column(name = "stat_gl")
-    private Integer statGL;
-
     @Builder
-    public CounselReportGL(CounselRequest counselRequest, Integer temperature, String summary,
-        String solution, Integer statA,
-        Integer statB, Integer statGL) {
-        super(counselRequest, temperature, summary, solution, statA, statB);
-        this.statGL = statGL;
+    public CounselReportGL(CounselRequest counselRequest, String summary,
+        String solution, Integer willingness, Integer selfOpenness, Integer voiceOver, Integer positiveLanguage, Integer frequency, String explanation) {
+        super(counselRequest, summary, solution, willingness, selfOpenness, voiceOver, positiveLanguage, frequency, explanation);
     }
 }

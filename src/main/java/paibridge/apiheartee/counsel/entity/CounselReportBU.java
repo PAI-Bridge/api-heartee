@@ -17,14 +17,10 @@ import paibridge.apiheartee.counsel.entity.CategoryType.Values;
 @Table(name = "counsel_report_bu")
 public class CounselReportBU extends CounselReport {
 
-    @Column(name = "stat_bu")
-    private Integer statBU;
-
     @Builder
-    public CounselReportBU(CounselRequest counselRequest, Integer temperature, String summary,
-        String solution, Integer statA,
-        Integer statB, Integer statBU) {
-        super(counselRequest, temperature, summary, solution, statA, statB);
-        this.statBU = statBU;
+    public CounselReportBU(CounselRequest counselRequest, String summary,
+        String solution, Integer willingness, Integer selfOpenness, Integer voiceOver, Integer positiveLanguage, Integer frequency, String explanation) {
+        super(counselRequest, summary, solution, willingness, selfOpenness, voiceOver, positiveLanguage, frequency, explanation);
+//        this.statBU = statBU;
     }
 }

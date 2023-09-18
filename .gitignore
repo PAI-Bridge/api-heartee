@@ -41,8 +41,14 @@ application-*.yml
 !application-*.sample.yml
 
 
+### AWS Configuration ###
+application-aws.yml
+
 ### DS_STORE ###
 .DS_Store
+
+### GOOGLE VISION API ###
+heartee-test-9e2e9efc4a79.json
 
 ### Log ###
 logs/
@@ -56,4 +62,3 @@ ddl.sql
 ### Docker ###
 docker-compose.local.yml
 docker-compose.dev.yml
-
